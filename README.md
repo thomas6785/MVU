@@ -30,7 +30,7 @@ Then add `mvu` to your fusesoc libraries:
     cd MVU
     git submodule update --init --recursive 
     fusesoc library add mvu .
-	
+
 Generate the required IP components. For Xilinx Vivado, do the following:
 
     cd tclscripts
@@ -39,6 +39,10 @@ Generate the required IP components. For Xilinx Vivado, do the following:
 Then run simulation (No GUI):
    
     fusesoc run --target=sim mvu
+
+The command above executes `base_tester.sv` to ensure the simulation setup is correct. Afterward, you can run other tests listed in the `mvu.core` file. For example, to run GEMV tests, you can use the following command:
+    
+    fusesoc run --target=sim-gemv mvu
 
 For synthesis:
     
