@@ -102,22 +102,8 @@ always_comb begin
                 mvu_cfg_if.zigzag_step_sel[mvu_id]= apb.pwdata[2*NJUMPS-1 : NJUMPS];
             end
             mvu_pkg::CSR_MVUOMVUSEL         : mvu_cfg_if.omvusel[mvu_id] = apb.pwdata[NMVU-1:0];
-            mvu_pkg::CSR_MVUIHPBASEADDR     : mvu_cfg_if.ihpbaseaddr[mvu_id] = apb.pwdata[BBDADDR-1:0];
-            mvu_pkg::CSR_MVUOHPBASEADDR     : mvu_cfg_if.ohpbaseaddr[mvu_id] = apb.pwdata[BBDADDR-1:0];
-            mvu_pkg::CSR_MVUOHPMVUSEL       : mvu_cfg_if.ohpmvusel[mvu_id] = apb.pwdata[NMVU-1:0];
-            mvu_pkg::CSR_MVUHPJUMP_0        : mvu_cfg_if.hpjump[mvu_id][0] = apb.pwdata[BJUMP-1:0];
-            mvu_pkg::CSR_MVUHPJUMP_1        : mvu_cfg_if.hpjump[mvu_id][1] = apb.pwdata[BJUMP-1:0];
-            mvu_pkg::CSR_MVUHPJUMP_2        : mvu_cfg_if.hpjump[mvu_id][2] = apb.pwdata[BJUMP-1:0];
-            mvu_pkg::CSR_MVUHPJUMP_3        : mvu_cfg_if.hpjump[mvu_id][3] = apb.pwdata[BJUMP-1:0];
-            mvu_pkg::CSR_MVUHPJUMP_4        : mvu_cfg_if.hpjump[mvu_id][4] = apb.pwdata[BJUMP-1:0];
-            mvu_pkg::CSR_MVUHPLENGTH_1      : mvu_cfg_if.hplength[mvu_id][1] = apb.pwdata[BJUMP-1:0];
-            mvu_pkg::CSR_MVUHPLENGTH_2      : mvu_cfg_if.hplength[mvu_id][2] = apb.pwdata[BJUMP-1:0];
-            mvu_pkg::CSR_MVUHPLENGTH_3      : mvu_cfg_if.hplength[mvu_id][3] = apb.pwdata[BJUMP-1:0];
-            mvu_pkg::CSR_MVUHPLENGTH_4      : mvu_cfg_if.hplength[mvu_id][4] = apb.pwdata[BJUMP-1:0];
             mvu_pkg::CSR_MVUUSESCALER_MEM   : mvu_cfg_if.usescaler_mem[mvu_id] = apb.pwdata[0];
             mvu_pkg::CSR_MVUUSEBIAS_MEM     : mvu_cfg_if.usebias_mem[mvu_id] = apb.pwdata[0];
-            mvu_pkg::CSR_MVUUSEPOOLER4HPOUT : mvu_cfg_if.usepooler4hpout[mvu_id] = apb.pwdata[0];
-            mvu_pkg::CSR_MVUUSEHPADDER      : mvu_cfg_if.usehpadder[mvu_id] = apb.pwdata[0];
         endcase
     end
 end
