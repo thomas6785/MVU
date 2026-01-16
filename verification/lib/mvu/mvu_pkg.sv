@@ -149,4 +149,9 @@ typedef w_data_t w_data_q_t[$];
 typedef logic [BDBANKW-1 : 0 ] a_data_t;
 typedef a_data_t a_data_q_t[$];
 
+typedef logic [BWBANKW-1 : 0 ] w_data_t;
+typedef w_data_t w_data_q_t[$];
+
+typedef logic [BDBANKW-1 : 0 ] a_data_t;
+typedef a_data_t a_data_q_t[$];
 endpackage
