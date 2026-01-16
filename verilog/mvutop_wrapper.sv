@@ -8,15 +8,16 @@ mvutop mvu(
     mvu_cfg_if.mvu_cfg
 );
 
-logic [mvu_pkg::APB_ADDR_WIDTH - 1:0] register_adr;
-logic [mvu_pkg::BMVUA-1 : 0] mvu_id;
-logic apb_write;
+wire [mvu_pkg::APB_ADDR_WIDTH - 1:0] register_adr;
+wire [mvu_pkg::BMVUA-1 : 0] mvu_id;
+wire apb_write;
 
 assign register_adr  = apb.paddr;
 assign mvu_id = register_adr[APB_ADDR_WIDTH-1:12];
 assign apb_write = apb.psel && apb.penable && apb.pwrite;
 
 // APB to register conversion
+// TODO latches are being used here, flip flops are preferred. Fix this
 always_comb begin
     // APB register write logic
     if (apb_write) begin
@@ -79,7 +80,7 @@ always_comb begin
                 mvu_cfg_if.d_signed[mvu_id]   = apb.pwdata[25];
             end
             mvu_pkg::CSR_MVUSTATUS   : begin
-                $display("CSR_MVUSTATUS functionality has not been declared!");
+                $display("APB attempted write to read-only register CSR_MVUSTATUS!");
             end
             mvu_pkg::CSR_MVUCOMMAND  : begin
                 mvu_cfg_if.countdown[mvu_id] = apb.pwdata[BCNTDWN-1 : 0];
@@ -109,24 +110,96 @@ always_comb begin
 end
 
 // Special handlin for 'start' field: self-clearing
-    genvar i;
-    generate for(i=0; i < NMVU; i = i+1) begin
-        always @(posedge mvu_ext_if.clk) begin
-            if (~mvu_ext_if.rst_n) begin
-                mvu_ext_if.start[i] <= 1'b0;
-            end else begin
-                if (apb_write) begin
-                    if (((mvu_pkg::mvu_csr_t'(register_adr[11:0])) == mvu_pkg::CSR_MVUCOMMAND) && (i==mvu_id)) begin
-                        mvu_ext_if.start[i] <= 1'b1;
-                    end else begin
-                        mvu_ext_if.start[i] <= 1'b0;
-                    end
+genvar i;
+generate for(i=0; i < NMVU; i = i+1) begin
+    always @(posedge mvu_ext_if.clk) begin
+        if (~mvu_ext_if.rst_n) begin
+            mvu_ext_if.start[i] <= 1'b0;
+        end else begin
+            if (apb_write) begin
+                if (((mvu_pkg::mvu_csr_t'(register_adr[11:0])) == mvu_pkg::CSR_MVUCOMMAND) && (i==mvu_id)) begin
+                    mvu_ext_if.start[i] <= 1'b1;
                 end else begin
                     mvu_ext_if.start[i] <= 1'b0;
                 end
+            end else begin
+                mvu_ext_if.start[i] <= 1'b0;
             end
         end
-    end endgenerate
+    end
+end endgenerate
+
+// assume we are always ready to accept APB transfers
+assign apb.pready  = 1'b1;
+
+// currently no logic for detecting illegal transactions
+assign apb.pslverr = 1'b0;
+
+// APB read MUX
+always_comb begin
+    unique case (mvu_pkg::mvu_csr_t'(register_adr[11:0])) // TODO would be better to only trigger on apb_read for power reaosns, but there are no read-write registers anyway
+        mvu_pkg::CSR_MVUWBASEPTR           : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUIBASEPTR           : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUSBASEPTR           : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUBBASEPTR           : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUOBASEPTR           : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUWJUMP_0            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUWJUMP_1            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUWJUMP_2            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUWJUMP_3            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUWJUMP_4            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUIJUMP_0            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUIJUMP_1            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUIJUMP_2            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUIJUMP_3            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUIJUMP_4            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUSJUMP_0            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUSJUMP_1            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUSJUMP_2            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUSJUMP_3            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUSJUMP_4            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUBJUMP_0            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUBJUMP_1            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUBJUMP_2            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUBJUMP_3            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUBJUMP_4            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUOJUMP_0            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUOJUMP_1            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUOJUMP_2            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUOJUMP_3            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUOJUMP_4            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUWLENGTH_0          : apb.prdata = '0; // write-only register TODO investigate why the register is not used? there's no write implementation
+        mvu_pkg::CSR_MVUWLENGTH_1          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUWLENGTH_2          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUWLENGTH_3          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUWLENGTH_4          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUILENGTH_1          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUILENGTH_2          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUILENGTH_3          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUILENGTH_4          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUSLENGTH_1          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUSLENGTH_2          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUSLENGTH_3          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUSLENGTH_4          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUBLENGTH_1          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUBLENGTH_2          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUBLENGTH_3          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUBLENGTH_4          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUOLENGTH_1          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUOLENGTH_2          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUOLENGTH_3          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUOLENGTH_4          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUPRECISION          : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUCOMMAND            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUQUANT              : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUSCALER             : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUCONFIG1            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUOMVUSEL            : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUUSESCALER_MEM      : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUUSEBIAS_MEM        : apb.prdata = '0; // write-only register
+        mvu_pkg::CSR_MVUSTATUS             : apb.prdata = {31'b0, mvu_ext_if.done[mvu_id]}; // read-only register
+        default : apb.prdata = '0; // invalid register address
+    endcase
+end
 
 endmodule
-
