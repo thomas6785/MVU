@@ -1,4 +1,4 @@
-module mvutop_wrapper import mvu_pkg::*;import apb_pkg::*;(
+module mvutop_wrapper import mvu_pkg::*;(
         MVU_EXT_INTERFACE mvu_ext_if,
         APB apb
 );
