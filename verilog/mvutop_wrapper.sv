@@ -108,12 +108,7 @@ always_comb begin
     end
 end
 
-    // APB logic: we are always ready to capture the data into our regs
-    // not supporting transfare failure
-    assign apb.pready  = 1'b1;
-    assign apb.pslverr = 1'b0;
-
-    // Circuit for generating start Signal
+// Special handlin for 'start' field: self-clearing
     genvar i;
     generate for(i=0; i < NMVU; i = i+1) begin
         always @(posedge mvu_ext_if.clk) begin
