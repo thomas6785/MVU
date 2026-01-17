@@ -94,8 +94,6 @@ interface MVU_CFG_INTERFACE();
     // logic[      BSCALERB-1 : 0] scaler2_b[NMVU-1 : 0];              // Config: multiplicative scaler (operand 'b')
     logic                       usescaler_mem[NMVU-1 : 0];          // Config: use scalar mem if 1; otherwise use the scaler_b input for scaling
     logic                       usebias_mem[NMVU-1 : 0];            // Config: use the bias memory if 1; if not, not bias is added in the scaler
-    logic                       usepooler4hpout[NMVU-1 : 0];        // Config: for the high-precision interconnect, use the output of pooler if 1, or use output of scaler1 if 0
-    logic                       usehpadder[NMVU-1 : 0];             // Config: use the hpadder if 1
     logic[        NJUMPS-1 : 0] shacc_load_sel[NMVU-1 : 0];         // Config: select jump trigger for shift/accumultor load
     logic[        NJUMPS-1 : 0] zigzag_step_sel[NMVU-1 : 0];        // Config: select jump trigger for stepping the zig-zag address generator  
 
