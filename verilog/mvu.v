@@ -278,7 +278,7 @@ always @(posedge clk) core_weights <= rdw_word;
         .addrb	(rdw_addr),		// read address from address generator
         .doutb	(core_weights)	// weight word to MVU core        
     );
- `else
+`else
     ram_simple2port #(
         .BDADDR (BWBANKA),
         .BDWORD (BWBANKW)        
@@ -291,15 +291,15 @@ always @(posedge clk) core_weights <= rdw_word;
         .wr_addr(wrw_addr),
         .wr_word(wrw_word)
     );
- `endif
+`endif
 
 
 // Scaler memory bank
 //      Used to store batch norm weights and/or quantization scalers
- ram_simple2port #(
+ram_simple2port #(
     .BDADDR(BSBANKA),
     .BDWORD(BSBANKW)
- ) scaler_bank (
+) scaler_bank (
     .clk(clk),
     .rd_en(rds_en),
     .rd_addr(rds_addr),
@@ -307,17 +307,17 @@ always @(posedge clk) core_weights <= rdw_word;
     .wr_en(wrs_en),
     .wr_addr(wrs_addr),
     .wr_word(wrs_word)
- );
+);
 
 
- // Bias memory bank
- //     Stores bias values from conv/fc/bn layers
+// Bias memory bank
+//     Stores bias values from conv/fc/bn layers
 // Scaler memory bank
 //      Used to store batch norm weights and/or quantization scalers
- ram_simple2port #(
+ram_simple2port #(
     .BDADDR(BBBANKA),
     .BDWORD(BBBANKW)
- ) bias_bank (
+) bias_bank (
     .clk(clk),
     .rd_en(rdb_en),
     .rd_addr(rdb_addr),
@@ -325,7 +325,7 @@ always @(posedge clk) core_weights <= rdw_word;
     .wr_en(wrb_en),
     .wr_addr(wrb_addr),
     .wr_word(wrb_word)
- );
+);
 
 
 // Negate the core output before accumulation, if the negation control is set to 1
