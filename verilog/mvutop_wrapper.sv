@@ -19,7 +19,79 @@ assign apb_write = apb.psel && apb.penable && apb.pwrite;
 // APB to register conversion
 always_comb begin
     // APB register write logic
-    if (apb_write) begin
+    if (!reset_n) begin // reset all registers to default values
+        genvar genvar_mvu_id;
+        for (genvar_mvu_id = 0; genvar_mvu_id < NMVU; genvar_mvu_id=genvar_mvu_id+1) begin
+            mvu_cfg_if.wbaseaddr[mvu_id]        = '0; // base address defaults can be zero
+            mvu_cfg_if.ibaseaddr[mvu_id]        = '0;
+            mvu_cfg_if.sbaseaddr[mvu_id]        = '0;
+            mvu_cfg_if.bbaseaddr[mvu_id]        = '0;
+            mvu_cfg_if.obaseaddr[mvu_id]        = '0;
+            mvu_cfg_if.wjump[mvu_id][0]         = '0; // jumps and lengths for programming AGU's defaults can be zero too
+            mvu_cfg_if.wjump[mvu_id][1]         = '0;
+            mvu_cfg_if.wjump[mvu_id][2]         = '0;
+            mvu_cfg_if.wjump[mvu_id][3]         = '0;
+            mvu_cfg_if.wjump[mvu_id][4]         = '0;
+            mvu_cfg_if.ijump[mvu_id][0]         = '0;
+            mvu_cfg_if.ijump[mvu_id][1]         = '0;
+            mvu_cfg_if.ijump[mvu_id][2]         = '0;
+            mvu_cfg_if.ijump[mvu_id][3]         = '0;
+            mvu_cfg_if.ijump[mvu_id][4]         = '0;
+            mvu_cfg_if.sjump[mvu_id][0]         = '0;
+            mvu_cfg_if.sjump[mvu_id][1]         = '0;
+            mvu_cfg_if.sjump[mvu_id][2]         = '0;
+            mvu_cfg_if.sjump[mvu_id][3]         = '0;
+            mvu_cfg_if.sjump[mvu_id][4]         = '0;
+            mvu_cfg_if.bjump[mvu_id][0]         = '0;
+            mvu_cfg_if.bjump[mvu_id][1]         = '0;
+            mvu_cfg_if.bjump[mvu_id][2]         = '0;
+            mvu_cfg_if.bjump[mvu_id][3]         = '0;
+            mvu_cfg_if.bjump[mvu_id][4]         = '0;
+            mvu_cfg_if.ojump[mvu_id][0]         = '0;
+            mvu_cfg_if.ojump[mvu_id][1]         = '0;
+            mvu_cfg_if.ojump[mvu_id][2]         = '0;
+            mvu_cfg_if.ojump[mvu_id][3]         = '0;
+            mvu_cfg_if.ojump[mvu_id][4]         = '0;
+            mvu_cfg_if.wlength[mvu_id][1]       = '0;
+            mvu_cfg_if.wlength[mvu_id][2]       = '0;
+            mvu_cfg_if.wlength[mvu_id][3]       = '0;
+            mvu_cfg_if.wlength[mvu_id][4]       = '0;
+            mvu_cfg_if.ilength[mvu_id][1]       = '0;
+            mvu_cfg_if.ilength[mvu_id][2]       = '0;
+            mvu_cfg_if.ilength[mvu_id][3]       = '0;
+            mvu_cfg_if.ilength[mvu_id][4]       = '0;
+            mvu_cfg_if.slength[mvu_id][1]       = '0;
+            mvu_cfg_if.slength[mvu_id][1]       = '0;
+            mvu_cfg_if.slength[mvu_id][1]       = '0;
+            mvu_cfg_if.slength[mvu_id][1]       = '0;
+            mvu_cfg_if.blength[mvu_id][1]       = '0;
+            mvu_cfg_if.blength[mvu_id][1]       = '0;
+            mvu_cfg_if.blength[mvu_id][1]       = '0;
+            mvu_cfg_if.blength[mvu_id][1]       = '0;
+            mvu_cfg_if.olength[mvu_id][1]       = '0;
+            mvu_cfg_if.olength[mvu_id][2]       = '0;
+            mvu_cfg_if.olength[mvu_id][3]       = '0;
+            mvu_cfg_if.olength[mvu_id][4]       = '0;
+            mvu_cfg_if.wprecision[mvu_id]       = '0;
+            mvu_cfg_if.iprecision[mvu_id]       = '0;
+            mvu_cfg_if.oprecision[mvu_id]       = '0;
+            mvu_cfg_if.w_signed[mvu_id]         = '0;
+            mvu_cfg_if.d_signed[mvu_id]         = '0;
+            mvu_cfg_if.countdown[mvu_id]        = '0;
+            mvu_cfg_if.max_en[mvu_id]           = '0;
+            mvu_cfg_if.max_clr[mvu_id]          = '0;
+            mvu_cfg_if.max_pool[mvu_id]         = '0;
+            mvu_cfg_if.quant_clr[mvu_id]        = '0;
+            mvu_cfg_if.mul_mode[mvu_id]         = '0;
+            mvu_cfg_if.quant_msbidx[mvu_id]     = '0;
+            mvu_cfg_if.scaler_b[mvu_id]         = '0;
+            mvu_cfg_if.shacc_load_sel[mvu_id]   = 32'b00100; // For 5 jumps, select the j2 by default to shift the accumulator (indicating we are at a new bit of signifiance in our bit-serial product); // TODO remove this and default to zero - the program should really explicitly set this
+            mvu_cfg_if.zigzag_step_sel[mvu_id]  = 32'b00001; // For 5 jumps, select the j0 by default (indcating to the zigzagu to move to the next address at the end of each loop of that level);
+            mvu_cfg_if.omvusel[mvu_id]          = '0;
+            mvu_cfg_if.usescaler_mem[mvu_id]    = '0;
+            mvu_cfg_if.usebias_mem[mvu_id]      = '0;
+        end
+    end else if (apb_write) begin
         unique case (mvu_pkg::mvu_csr_t'(register_adr[11:0]))
             mvu_pkg::CSR_MVUWBASEPTR : mvu_cfg_if.wbaseaddr[mvu_id] = apb.pwdata[BBWADDR-1 : 0];
             mvu_pkg::CSR_MVUIBASEPTR : mvu_cfg_if.ibaseaddr[mvu_id] = apb.pwdata[BBDADDR-1 : 0];
