@@ -854,7 +854,7 @@ class mvu_testbench_base extends BaseObj;
     endtask
 
     // Run the GEMV
-    task runGEMV(
+    task runGEMV( // these devs are allergic to comments istg
         int mvu,
         int iprec,
         int wprec,

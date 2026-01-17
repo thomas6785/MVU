@@ -118,7 +118,7 @@ class gemv_tester extends mvu_testbench_base;
         
         // Construct the transposed formatted vector
         expected = new[tile_h*oprec];
-        expected = '{default: '0};
+        foreach (expected[i]) expected[i] = '0;
         for (int j = 0; j < tile_h; j++) begin
             for (int i = 0; i < 64; i++) begin
                 value = expected_vector[j*64 + i] * s;
