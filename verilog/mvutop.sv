@@ -229,42 +229,42 @@ end
 
 // Clock in the input parameters when the start signal is asserted
 generate for(i = 0; i < NMVU; i = i + 1) begin: parambuf_array
-    always @(posedge mvu_ext.clk) begin
+    always @ (posedge mvu_ext.clk) begin
         if (~mvu_ext.rst_n) begin
-            mul_mode_q[i]       <= 0;
-            quant_msbidx_q[i]   <= 0;
-            countdown_q[i]      <= 0;
-            wprecision_q[i]     <= 0;
-            iprecision_q[i]     <= 0;
-            oprecision_q[i]     <= 0;
-            wbaseaddr_q[i]      <= 0;
-            ibaseaddr_q[i]      <= 0;
-            sbaseaddr_q[i]      <= 0;
-            bbaseaddr_q[i]      <= 0;
-            obaseaddr_q[i]      <= 0;
-            omvusel_q[i]        <= 0;
-            scaler_b_q[i]       <= 0;
-            usescaler_mem_q[i]  <= 0;
-            usebias_mem_q[i]    <= 0;
-            shacc_load_sel_q[i] <= 5'b00100;                // For 5 jumps, select the j2 by default
-            zigzag_step_sel_q[i] <= 5'b00001;               // For 5 jumps, select the j0 by default
+            mul_mode_q[i]               <= '0;
+            quant_msbidx_q[i]           <= '0;
+            countdown_q[i]              <= '0;
+            wprecision_q[i]             <= '0;
+            iprecision_q[i]             <= '0;
+            oprecision_q[i]             <= '0;
+            wbaseaddr_q[i]              <= '0;
+            ibaseaddr_q[i]              <= '0;
+            sbaseaddr_q[i]              <= '0;
+            bbaseaddr_q[i]              <= '0;
+            obaseaddr_q[i]              <= '0;
+            omvusel_q[i]                <= '0;
+            scaler_b_q[i]               <= '0;
+            usescaler_mem_q[i]          <= '0;
+            usebias_mem_q[i]            <= '0;
+            shacc_load_sel_q[i]         <= '0;
+            zigzag_step_sel_q[i]        <= '0;
 
             // Initialize the jump parameters
             for (int j = 0; j < NJUMPS; j++) begin
-                wjump_q[i][j] <= 0;
-                ijump_q[i][j] <= 0;
-                sjump_q[i][j] <= 0;
-                bjump_q[i][j] <= 0;
-                ojump_q[i][j] <= 0;
+                wjump_q[i][j] <= '0;
+                ijump_q[i][j] <= '0;
+                sjump_q[i][j] <= '0;
+                bjump_q[i][j] <= '0;
+                ojump_q[i][j] <= '0;
             end
 
-            // Intialize the length parameters
+            // Intialize the length parameters (noting that LENGTH_0 does not exist, start at 1)
             for (int j = 1; j < NJUMPS; j++) begin
-                wlength_q[i][j] <= 0;
-                ilength_q[i][j] <= 0;
-                slength_q[i][j] <= 0;
-                blength_q[i][j] <= 0;
-                olength_q[i][j] <= 0;
+                wlength_q[i][j] <= '0;
+                ilength_q[i][j] <= '0;
+                slength_q[i][j] <= '0;
+                blength_q[i][j] <= '0;
+                olength_q[i][j] <= '0;
             end
 
         end else begin
