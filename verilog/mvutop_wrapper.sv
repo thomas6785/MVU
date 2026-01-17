@@ -205,11 +205,11 @@ end endgenerate
 assign apb.pready  = 1'b1;
 
 // currently no logic for detecting illegal transactions
-assign apb.pslverr = 1'b0;
+assign apb.pslverr = 1'b0; // TODO detect illegal addresses, ro writes, and wo reads
 
 // APB read MUX
 always_comb begin
-    unique case (mvu_pkg::mvu_csr_t'(register_adr[11:0])) // TODO would be better to only trigger on apb_read for power reaosns, but there are no read-write registers anyway
+    unique case (mvu_pkg::mvu_csr_t'(register_adr[11:0])) // TODO would be better to only update on apb_read for power reaosns, but there are no read-write registers atm anyway
         mvu_pkg::CSR_MVUWBASEPTR           : apb.prdata = '0; // write-only register
         mvu_pkg::CSR_MVUIBASEPTR           : apb.prdata = '0; // write-only register
         mvu_pkg::CSR_MVUSBASEPTR           : apb.prdata = '0; // write-only register
