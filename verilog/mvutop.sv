@@ -230,7 +230,7 @@ end
 // Clock in the input parameters when the start signal is asserted
 generate for(i = 0; i < NMVU; i = i + 1) begin: parambuf_array
     always @ (posedge mvu_ext.clk) begin
-        if (~mvu_ext.rst_n) begin // TODO should reset be async?
+        if (~mvu_ext.rst_n) begin
             mul_mode_q[i]               <= '0;
             quant_msbidx_q[i]           <= '0;
             countdown_q[i]              <= '0;
