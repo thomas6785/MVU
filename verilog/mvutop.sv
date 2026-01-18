@@ -56,7 +56,7 @@ logic[        NMVU-1 : 0] rdd_en;
 logic[        NMVU-1 : 0] rdd_grnt;
 logic[NMVU*BDBANKA-1 : 0] rdd_addr;
 logic[        NMVU-1 : 0] wrd_en;
-logic[        NMVU-1 : 0] wrd_grnt;
+logic[        NMVU-1 : 0] wrd_grnt; // TODO this signal is not used - there is no handling for a write conflict
 logic[NMVU*BDBANKA-1 : 0] wrd_addr;
 
 // MVU Scaler and Bias memory control
