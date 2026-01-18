@@ -6,7 +6,6 @@ interface MVU_EXT_INTERFACE(input logic clk);
     logic[          NMVU-1 : 0] irq;                                // Interrupt request
     logic[          NMVU-1 : 0] shacc_clr;                          // Control: accumulator clear
     logic                       ic_clr;                             // Interconnect: clear
-    logic                       ichp_clr;                           // Interconnect (high-precision): clear
     logic[  NMVU*BWBANKA-1 : 0] wrw_addr;                           // Weight memory: write address
     logic[  NMVU*BWBANKW-1 : 0] wrw_word;                           // Weight memory: write word
     logic[          NMVU-1 : 0] wrw_en;                             // Weight memory: write enable
@@ -33,7 +32,6 @@ modport  mvu_ext (
                            output irq,
                            input  ic_clr,
                            input  shacc_clr,
-                           input  ichp_clr,
                            input  wrw_addr,
                            input  wrw_word,
                            input  wrw_en,
@@ -75,18 +73,13 @@ interface MVU_CFG_INTERFACE();
     logic[       BBBANKA-1 : 0] bbaseaddr[NMVU-1 : 0];              // Config: bias memory base address
     logic[       BBDADDR-1 : 0] obaseaddr[NMVU-1 : 0];              // Config: data memory base address for output
     logic[          NMVU-1 : 0] omvusel[NMVU-1 : 0];                // Config: MVU selector bits for output
-    logic[       BBDADDR-1 : 0] ihpbaseaddr[NMVU-1 : 0];            // Config: high-precision data memory base address for input
-    logic[       BBDADDR-1 : 0] ohpbaseaddr[NMVU-1 : 0];            // Config: high-precision data memory base address for output
-    logic[          NMVU-1 : 0] ohpmvusel[NMVU-1 : 0];              // Config: MVU selector bits for high-precision output
     logic[         BJUMP-1 : 0] wjump[NMVU-1 : 0][NJUMPS-1 : 0];    // Config: weight jumps
     logic[         BJUMP-1 : 0] ijump[NMVU-1 : 0][NJUMPS-1 : 0];    // Config: input jumps
-    logic[         BJUMP-1 : 0] hpjump[NMVU-1 : 0][NJUMPS-1 : 0];   // Config: input jumps
     logic[         BJUMP-1 : 0] sjump[NMVU-1 : 0][NJUMPS-1 : 0];    // Config: scaler jumps
     logic[         BJUMP-1 : 0] bjump[NMVU-1 : 0][NJUMPS-1 : 0];    // Config: bias jumps
     logic[         BJUMP-1 : 0] ojump[NMVU-1 : 0][NJUMPS-1 : 0];    // Config: output jumps
     logic[       BLENGTH-1 : 0] wlength[NMVU-1 : 0][NJUMPS-1 : 1];  // Config: weight lengths
     logic[       BLENGTH-1 : 0] ilength[NMVU-1 : 0][NJUMPS-1 : 1];  // Config: input length
-    logic[       BLENGTH-1 : 0] hplength[NMVU-1 : 0][NJUMPS-1 : 1]; // Config: scaler length
     logic[       BLENGTH-1 : 0] slength[NMVU-1 : 0][NJUMPS-1 : 1];  // Config: scaler length
     logic[       BLENGTH-1 : 0] blength[NMVU-1 : 0][NJUMPS-1 : 1];  // Config: bias length
     logic[       BLENGTH-1 : 0] olength[NMVU-1 : 0][NJUMPS-1 : 1];  // Config: output length
@@ -116,18 +109,13 @@ modport  mvu_cfg (
     input bbaseaddr,
     input obaseaddr,
     input omvusel,
-    input ihpbaseaddr,
-    input ohpbaseaddr,
-    input ohpmvusel,
     input wjump,
     input ijump,
-    input hpjump,
     input sjump,
     input bjump,
     input ojump,
     input wlength,
     input ilength,
-    input hplength,
     input slength,
     input blength,
     input olength,
@@ -136,8 +124,6 @@ modport  mvu_cfg (
     // input scaler2_b,
     input usescaler_mem,
     input usebias_mem,
-    input usepooler4hpout,
-    input usehpadder,
     input shacc_load_sel,
     input zigzag_step_sel
 );
