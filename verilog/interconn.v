@@ -105,7 +105,7 @@ generate if(N > 1) begin: multiple
     end
 
     for (i=0; i < N; i=i+1) begin: loop_output_regs
-        always @(posedge clk or posedge clr) begin
+        always @(posedge clk) begin
             if(clr) begin
                 recv_en[i] <= 0;
                 recv_addr[i*BADDR +: BADDR] <= 0;
@@ -123,7 +123,7 @@ generate if(N > 1) begin: multiple
 
 // ...otherwise, just connect the signals directly
 end else begin:single
-    always @(posedge clk or posedge clr) begin
+    always @(posedge clk) begin
         if(clr) begin
             recv_en <= 0;
             recv_addr <= 0;
