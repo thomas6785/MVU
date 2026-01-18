@@ -97,7 +97,6 @@ class mvu_testbench_base extends BaseObj;
                 logger.print($sformatf("writeData: did not get grant signal for MVU %0d for address %x, so waiting until next cycle.", mvu, addr));
             end
         end
-        @(posedge mvu_ext_if.clk)
         mvu_ext_if.wrc_en[mvu] = 1'b0;
     endtask
 
