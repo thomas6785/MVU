@@ -86,12 +86,12 @@ generate for (genvar_mvu_id = 0; genvar_mvu_id < NMVU; genvar_mvu_id = genvar_mv
             mvu_cfg_if.quant_clr[genvar_mvu_id]        <= '0;
             mvu_cfg_if.mul_mode[genvar_mvu_id]         <= '0;
             mvu_cfg_if.quant_msbidx[genvar_mvu_id]     <= '0;
-            mvu_cfg_if.scaler_b[genvar_mvu_id]         <= '0;
+            mvu_cfg_if.scaler_b[genvar_mvu_id]         <= 32'b1; // default scaler value of 1.0
             mvu_cfg_if.shacc_load_sel[genvar_mvu_id]   <= 32'b00100; // For 5 jumps, select the j2 by default to shift the accumulator (indicating we are at a new bit of signifiance in our bit-serial product); // TODO remove this and default to zero - the program should really explicitly set this
             mvu_cfg_if.zigzag_step_sel[genvar_mvu_id]  <= 32'b00001; // For 5 jumps, select the j0 by default (indcating to the zigzagu to move to the next address at the end of each loop of that level);
             mvu_cfg_if.omvusel[genvar_mvu_id]          <= 32'(1<<genvar_mvu_id); // by default direct MVU output to itself
-            mvu_cfg_if.usescaler_mem[genvar_mvu_id]    <= '0;
-            mvu_cfg_if.usebias_mem[genvar_mvu_id]      <= '0;
+            mvu_cfg_if.usescaler_mem[genvar_mvu_id]    <= '0; // do not use scaler memory by default, use scaler_b from regmap
+            mvu_cfg_if.usebias_mem[genvar_mvu_id]      <= '0; // do not use bias memory by default, use zero bias
         end : reset
         else if (apb_write && (mvu_id == genvar_mvu_id)) begin : write_logic
             unique case (mvu_pkg::mvu_csr_t'(register_adr[11:0]))
