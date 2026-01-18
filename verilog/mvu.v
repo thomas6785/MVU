@@ -400,7 +400,7 @@ generate for(i=0;i<NDBANK;i=i+1) begin:bankarray
 									  ((rdd_grnt & rdd_bankhit) ? rdd_addr : rdc_addr);
     wire[1 : 0]         rd_muxcode  = (rdi_grnt & rdi_bankhit) ?     2'd0 :
 									  ((rdd_grnt & rdd_bankhit) ?     2'd1 : 2'd2);
-    bank64k #(BDBANKW, BDBANKAWS) db (clk,
+    bank64k #(BDBANKW, BDBANKAWS) db (clk, // TODO this is weirdly implemented? If collision handling is done in cdwu, why do we pass in all three ports into the bank?
         rd_en & rd_bankhit, rd_addr[0 +: BDBANKAWS], rd_muxcode,
         wr_en & wr_bankhit, wr_addr[0 +: BDBANKAWS], wr_muxcode,
         rdi_words[i*BDBANKW +: BDBANKW], wri_word,
