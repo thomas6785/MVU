@@ -10,7 +10,7 @@
 /**** Module ****/
 module mvutop import mvu_pkg::*; ( 
                                     MVU_EXT_INTERFACE mvu_ext,
-                                    input mvu_pkg::mvu_cfg_signals_t mvu_cfg
+                                    input mvu_pkg::mvu_cfg_signals_t mvu_cfg[NMVU-1:0]
                                  );
 
 
@@ -134,8 +134,8 @@ interconn #(
 
 // Interconnect wires
 generate for(i=0; i < NMVU; i = i+1) begin
-    assign ic_send_to[i*NMVU +: NMVU] = mvu_cfg.omvusel[i];
-    assign ic_send_en[i] = (| mvu_cfg.omvusel[i]) & !mvu_cfg.omvusel[i][i] & outstep[i];
+    assign ic_send_to[i*NMVU +: NMVU] = mvu_cfg[i].omvusel;
+    assign ic_send_en[i] = (| mvu_cfg[i].omvusel) & !mvu_cfg[i].omvusel[i] & outstep[i];
 end endgenerate
 
 assign ic_send_word = mvu_word_out;
@@ -153,8 +153,8 @@ assign rdi_addr         = 0;
 assign rdd_en           = run;                              // MVU reads when running
 
 generate for(i=0; i < NMVU; i = i+1) begin
-    assign rds_en[i] = run[i] & mvu_cfg.usescaler_mem[i];            // No need to read from scaler mem if not using
-    assign rdb_en[i] = run[i] & mvu_cfg.usebias_mem[i];              // No need to read from bias mem if not using
+    assign rds_en[i] = run[i] & mvu_cfg[i].usescaler_mem;            // No need to read from scaler mem if not using
+    assign rdb_en[i] = run[i] & mvu_cfg[i].usebias_mem;              // No need to read from bias mem if not using
 end endgenerate
 
 // TODO: WIRE THESE UP TO SOMETHING USEFUL
@@ -169,22 +169,25 @@ assign shacc_load       = shacc_done | shacc_load_start;    // Load accumulator 
 // Clear signals (just connect to global reset for now)
 assign ic_clr_int       = !mvu_ext.rst_n | mvu_ext.ic_clr;
 assign controller_clr   = {NMVU{!mvu_ext.rst_n}};
-assign inagu_clr        = {NMVU{!mvu_ext.rst_n}} | mvu_cfg.start;
 assign outagu_clr       = {NMVU{!mvu_ext.rst_n}};
 assign shacc_clr_int    = {NMVU{!mvu_ext.rst_n}} | mvu_ext.shacc_clr;       // Clear the accumulator
 assign scaleragu_clr    = {NMVU{!mvu_ext.rst_n}} | scaleragu_clr_dly;
 assign biasagu_clr      = {NMVU{!mvu_ext.rst_n}} | biasagu_clr_dly;
 assign scaler_clr       = {NMVU{!mvu_ext.rst_n}};
-assign quant_clr_int    = {NMVU{!mvu_ext.rst_n}} | mvu_cfg.quant_clr;
+
+generate for(i = 0; i < NMVU; i = i + 1) begin: maxclrarry
+    assign inagu_clr[i]        = !mvu_ext.rst_n | mvu_cfg[i].start;
+    assign quant_clr_int[i]    = !mvu_ext.rst_n | mvu_cfg[i].quant_clr;
+    assign quant_ctrl_clr[i]   = !mvu_ext.rst_n | mvu_cfg[i].quant_clr;
+end endgenerate
 
 // Quantizer and output control signals
 assign quant_start      = maxpool_done;
 assign outstep          = quant_step;
-assign quant_ctrl_clr   = {NMVU{!mvu_ext.rst_n}} | mvu_cfg.quant_clr;
 
 // MVU Data Memory control
 generate for(i = 0; i < NMVU; i = i + 1) begin: wrd_en_array
-    assign wrd_en[i] = outstep[i] & mvu_cfg.omvusel[i][i];
+    assign wrd_en[i] = outstep[i] & mvu_cfg[i].omvusel[i];
 end endgenerate
 
 // Controllers
@@ -194,8 +197,8 @@ generate for(i = 0; i < NMVU; i = i + 1) begin: controllerarray
     ) controller_unit (
         .clk        (mvu_ext.clk),
         .clr        (controller_clr[i]),
-        .start      (mvu_cfg.start[i]),
-        .countdown  (mvu_cfg.countdown[i]),
+        .start      (mvu_cfg[i].start),
+        .countdown  (mvu_cfg[i].countdown),
         .step       (step[i]),
         .run        (run[i]),
         .done       (mvu_ext.done[i]),
@@ -215,15 +218,15 @@ generate for(i = 0; i < NMVU; i = i + 1) begin: inaguarray
         .clk        (mvu_ext.clk),
         .clr        (inagu_clr[i]),
         .en         (run[i]),
-        .iprecision (mvu_cfg.iprecision[i]),
-        .ijump      (mvu_cfg.ijump[i]),
-        .ilength    (mvu_cfg.ilength[i]),
-        .ibaseaddr  (mvu_cfg.ibaseaddr[i]),
-        .wprecision (mvu_cfg.wprecision[i]),
-        .wjump      (mvu_cfg.wjump[i]),
-        .wlength    (mvu_cfg.wlength[i]),
-        .wbaseaddr  (mvu_cfg.wbaseaddr[i]),
-        .zigzag_step_sel(mvu_cfg.zigzag_step_sel[i]),
+        .iprecision (mvu_cfg[i].iprecision),
+        .ijump      (mvu_cfg[i].ijump),
+        .ilength    (mvu_cfg[i].ilength),
+        .ibaseaddr  (mvu_cfg[i].ibaseaddr),
+        .wprecision (mvu_cfg[i].wprecision),
+        .wjump      (mvu_cfg[i].wjump),
+        .wlength    (mvu_cfg[i].wlength),
+        .wbaseaddr  (mvu_cfg[i].wbaseaddr),
+        .zigzag_step_sel(mvu_cfg[i].zigzag_step_sel),
         .iaddr_out  (rdd_addr[i*BDBANKA +: BDBANKA]),
         .waddr_out  (rdw_addr[i*BWBANKA +: BWBANKA]),
         .imsb       (d_msb[i]),
@@ -243,8 +246,8 @@ generate for(i = 0; i < NMVU; i = i+1) begin: scalerbiasaguarray
         .clk        (mvu_ext.clk),
         .clr        (scaleragu_clr[i]),
         .step       (scaleragu_step[i]),
-        .l          (mvu_cfg.slength[i]),
-        .j          (mvu_cfg.sjump[i]),            // TODO: come up with better numbering scheme
+        .l          (mvu_cfg[i].slength),
+        .j          (mvu_cfg[i].sjump),            // TODO: come up with better numbering scheme
         .addr_out   (rds_addr_offset[i]),
         .z_out      (),
         .on_j       ()
@@ -257,15 +260,15 @@ generate for(i = 0; i < NMVU; i = i+1) begin: scalerbiasaguarray
         .clk        (mvu_ext.clk),
         .clr        (scaleragu_clr[i]),
         .step       (scaleragu_step[i]),
-        .l          (mvu_cfg.blength[i]),
-        .j          (mvu_cfg.bjump[i]),            // TODO: come up with better numbering scheme
+        .l          (mvu_cfg[i].blength),
+        .j          (mvu_cfg[i].bjump),            // TODO: come up with better numbering scheme
         .addr_out   (rdb_addr_offset[i]),
         .z_out      (),
         .on_j       ()
     );
 
-    assign rds_addr[i*BSBANKA +: BSBANKA] = mvu_cfg.sbaseaddr[i] + rds_addr_offset[i];
-    assign rdb_addr[i*BBBANKA +: BBBANKA] = mvu_cfg.bbaseaddr[i] + rdb_addr_offset[i];
+    assign rds_addr[i*BSBANKA +: BSBANKA] = mvu_cfg[i].sbaseaddr + rds_addr_offset[i];
+    assign rdb_addr[i*BBBANKA +: BBBANKA] = mvu_cfg[i].bbaseaddr + rdb_addr_offset[i];
 
 end endgenerate
 
@@ -279,14 +282,14 @@ generate for(i = 0; i < NMVU; i = i+1) begin:outaguarray
             .clr        (outagu_clr[i]                      ),
             .step       (outstep[i]                         ),
             .load       (outagu_load[i]                     ),
-            .baseaddr   (mvu_cfg.obaseaddr[i]),
+            .baseaddr   (mvu_cfg[i].obaseaddr),
             .addrout    (wrd_addr[i*BDBANKA  +: BDBANKA]    )
         );
 end endgenerate
 
 // Quantizer Controllers
 generate for(i = 0; i < NMVU; i = i+1) begin: quantser_ctrlarray
-    assign quant_bwout[i*BPREC +: BQBOUT] = mvu_cfg.oprecision[i];
+    assign quant_bwout[i*BPREC +: BQBOUT] = mvu_cfg[i].oprecision;
     quantser_ctrl #(
         .BWOUT      (BSCALERP)
     ) quantser_ctrl_unit (
@@ -301,11 +304,13 @@ generate for(i = 0; i < NMVU; i = i+1) begin: quantser_ctrlarray
 end endgenerate
 
 // Negate the input to the accumulators when one or both data/weights are signed and is on an MSB
-assign neg_acc = (mvu_cfg.d_signed & d_msb) ^ (mvu_cfg.w_signed & w_msb);
+generate for(i = 0; i < NMVU; i = i+1) begin: negaccarray
+    assign neg_acc[i] = (mvu_cfg[i].d_signed & d_msb[i]) ^ (mvu_cfg[i].w_signed & w_msb[i]);
+end endgenerate
 
 // Trigger when the shacc should load
 generate for(i = 0; i < NMVU; i = i+1) begin: triggers
-    assign agu_shacc_done[i] = run[i] && (wagu_on_j[i] & mvu_cfg.shacc_load_sel[i]);
+    assign agu_shacc_done[i] = run[i] && (wagu_on_j[i] & mvu_cfg[i].shacc_load_sel);
 end endgenerate
 
 
@@ -319,7 +324,7 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
         .clk    (mvu_ext.clk), 
         .clr    (~mvu_ext.rst_n),
         .step   (1'b1),
-        .in     (mvu_cfg.start[i]),
+        .in     (mvu_cfg[i].start),
         .out    (shacc_load_start[i])
     );
 
@@ -379,7 +384,7 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
         .clk    (mvu_ext.clk), 
         .clr    (~mvu_ext.rst_n),
         .step   (1'b1),
-        .in     (mvu_cfg.start[i]),
+        .in     (mvu_cfg[i].start),
         .out    (scaleragu_clr_dly[i])
     );
 
@@ -399,7 +404,7 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
         .clk    (mvu_ext.clk),
         .clr    (~mvu_ext.rst_n),
         .step   (1'b1),
-        .in     (mvu_cfg.start[i]),
+        .in     (mvu_cfg[i].start),
         .out    (outagu_load[i])
     );
 
@@ -415,21 +420,21 @@ generate for(i=0;i<NMVU;i=i+1) begin:mvuarray
         (
             .clk            (mvu_ext.clk                            ),
             .run            (run[i]                                 ),
-            .mul_mode       (mvu_cfg.mul_mode[i]                    ),
+            .mul_mode       (mvu_cfg[i].mul_mode                    ),
             .neg_acc        (neg_acc_dly[i]                         ),
             .shacc_clr      (shacc_clr_int[i]                       ),
             .shacc_load     (shacc_load[i]                          ),
             .shacc_acc      (shacc_acc[i]                           ),
             .shacc_sh       (shacc_sh[i]                            ),
             .scaler_clr     (scaler_clr[i]                          ),
-            .scaler_b       (mvu_cfg.scaler_b[i]                    ),
-            .usescaler_mem  (mvu_cfg.usescaler_mem[i]               ),
-            .usebias_mem    (mvu_cfg.usebias_mem[i]                 ),
-            .max_en         (mvu_cfg.max_en[i]                      ),
-            .max_clr        (mvu_cfg.max_clr[i]                     ),
-            .max_pool       (mvu_cfg.max_pool[i]                    ),
+            .scaler_b       (mvu_cfg[i].scaler_b                    ),
+            .usescaler_mem  (mvu_cfg[i].usescaler_mem               ),
+            .usebias_mem    (mvu_cfg[i].usebias_mem                 ),
+            .max_en         (mvu_cfg[i].max_en                      ),
+            .max_clr        (mvu_cfg[i].max_clr                     ),
+            .max_pool       (mvu_cfg[i].max_pool                    ),
             .quant_clr      (quant_clr_int[i]                       ),
-            .quant_msbidx   (mvu_cfg.quant_msbidx[i]                ),
+            .quant_msbidx   (mvu_cfg[i].quant_msbidx                ),
             .quant_load     (quant_load[i]                          ),
             .quant_step     (quant_step[i]                          ),
             .rdw_addr       (rdw_addr[i*BWBANKA +: BWBANKA]         ),

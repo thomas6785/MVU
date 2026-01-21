@@ -151,40 +151,40 @@ typedef a_data_t a_data_q_t[$];
 
 // Define a structure to hold all MVU configuration signals
 typedef struct {
-	logic[     NMVU-1 : 0] start; 		       	               // Start the MVU job
-	logic[          1 : 0] mul_mode[NMVU-1 : 0];               // Config: multiply mode
-    logic[     NMVU-1 : 0] d_signed;                           // Config: input data signed
-    logic[     NMVU-1 : 0] w_signed;                           // Config: weights signed
-    logic[     NMVU-1 : 0] max_en;                             // Config: max pool enable
-    logic[     NMVU-1 : 0] max_clr;                            // Config: max pool clear
-    logic[     NMVU-1 : 0] quant_clr;                          // Quantizer: clear
-    logic[     NMVU-1 : 0] max_pool;                           // Config: max pool mode
-    logic[ BQMSBIDX-1 : 0] quant_msbidx[NMVU-1 : 0];           // Quantizer: bit position index of the MSB
-    logic[  BCNTDWN-1 : 0] countdown[NMVU-1 : 0];              // Config: number of clocks to countdown for given task
-    logic[    BPREC-1 : 0] wprecision[NMVU-1 : 0];             // Config: weight precision
-    logic[    BPREC-1 : 0] iprecision[NMVU-1 : 0];             // Config: input precision
-    logic[    BPREC-1 : 0] oprecision[NMVU-1 : 0];             // Config: output precision
-    logic[  BBWADDR-1 : 0] wbaseaddr[NMVU-1 : 0];              // Config: weight memory base address
-    logic[  BBDADDR-1 : 0] ibaseaddr[NMVU-1 : 0];              // Config: data memory base address for input
-    logic[  BSBANKA-1 : 0] sbaseaddr[NMVU-1 : 0];              // Config: scaler memory base address
-    logic[  BBBANKA-1 : 0] bbaseaddr[NMVU-1 : 0];              // Config: bias memory base address
-    logic[  BBDADDR-1 : 0] obaseaddr[NMVU-1 : 0];              // Config: data memory base address for output
-    logic[     NMVU-1 : 0] omvusel[NMVU-1 : 0];                // Config: MVU selector bits for output
-    logic[    BJUMP-1 : 0] wjump[NMVU-1 : 0][NJUMPS-1 : 0];    // Config: weight jumps
-    logic[    BJUMP-1 : 0] ijump[NMVU-1 : 0][NJUMPS-1 : 0];    // Config: input jumps
-    logic[    BJUMP-1 : 0] sjump[NMVU-1 : 0][NJUMPS-1 : 0];    // Config: scaler jumps
-    logic[    BJUMP-1 : 0] bjump[NMVU-1 : 0][NJUMPS-1 : 0];    // Config: bias jumps
-    logic[    BJUMP-1 : 0] ojump[NMVU-1 : 0][NJUMPS-1 : 0];    // Config: output jumps
-    logic[  BLENGTH-1 : 0] wlength[NMVU-1 : 0][NJUMPS-1 : 1];  // Config: weight lengths
-    logic[  BLENGTH-1 : 0] ilength[NMVU-1 : 0][NJUMPS-1 : 1];  // Config: input length
-    logic[  BLENGTH-1 : 0] slength[NMVU-1 : 0][NJUMPS-1 : 1];  // Config: scaler length
-    logic[  BLENGTH-1 : 0] blength[NMVU-1 : 0][NJUMPS-1 : 1];  // Config: bias length
-    logic[  BLENGTH-1 : 0] olength[NMVU-1 : 0][NJUMPS-1 : 1];  // Config: output length
-    logic[ BSCALERB-1 : 0] scaler_b[NMVU-1 : 0];               // Config: multiplicative scaler (operand 'b')
-    logic                  usescaler_mem[NMVU-1 : 0];          // Config: use scalar mem if 1; otherwise use the scaler_b input for scaling
-    logic                  usebias_mem[NMVU-1 : 0];            // Config: use the bias memory if 1; if not, not bias is added in the scaler
-    logic[   NJUMPS-1 : 0] shacc_load_sel[NMVU-1 : 0];         // Config: select jump trigger for shift/accumultor load
-    logic[   NJUMPS-1 : 0] zigzag_step_sel[NMVU-1 : 0];        // Config: select jump trigger for stepping the zig-zag address generator  
+	logic                  start; 		       	               // Start the MVU job
+	logic[          1 : 0] mul_mode;            			   // Config: multiply mode
+    logic                  d_signed;                           // Config: input data signed
+    logic                  w_signed;                           // Config: weights signed
+    logic                  max_en;                             // Config: max pool enable
+    logic                  max_clr;                            // Config: max pool clear
+    logic                  quant_clr;                          // Quantizer: clear
+    logic                  max_pool;                           // Config: max pool mode
+    logic[ BQMSBIDX-1 : 0] quant_msbidx;                       // Quantizer: bit position index of the MSB
+    logic[  BCNTDWN-1 : 0] countdown;                          // Config: number of clocks to countdown for given task
+    logic[    BPREC-1 : 0] wprecision;                         // Config: weight precision
+    logic[    BPREC-1 : 0] iprecision;                         // Config: input precision
+    logic[    BPREC-1 : 0] oprecision;                         // Config: output precision
+    logic[  BBWADDR-1 : 0] wbaseaddr;                          // Config: weight memory base address
+    logic[  BBDADDR-1 : 0] ibaseaddr;                          // Config: data memory base address for input
+    logic[  BSBANKA-1 : 0] sbaseaddr;                          // Config: scaler memory base address
+    logic[  BBBANKA-1 : 0] bbaseaddr;                          // Config: bias memory base address
+    logic[  BBDADDR-1 : 0] obaseaddr;                          // Config: data memory base address for output
+    logic[     NMVU-1 : 0] omvusel;                            // Config: MVU selector bits for output
+    logic[    BJUMP-1 : 0] wjump[NJUMPS-1 : 0];                // Config: weight jumps
+    logic[    BJUMP-1 : 0] ijump[NJUMPS-1 : 0];                // Config: input jumps
+    logic[    BJUMP-1 : 0] sjump[NJUMPS-1 : 0];                // Config: scaler jumps
+    logic[    BJUMP-1 : 0] bjump[NJUMPS-1 : 0];                // Config: bias jumps
+    logic[    BJUMP-1 : 0] ojump[NJUMPS-1 : 0];                // Config: output jumps
+    logic[  BLENGTH-1 : 0] wlength[NJUMPS-1 : 1];              // Config: weight lengths
+    logic[  BLENGTH-1 : 0] ilength[NJUMPS-1 : 1];              // Config: input length
+    logic[  BLENGTH-1 : 0] slength[NJUMPS-1 : 1];              // Config: scaler length
+    logic[  BLENGTH-1 : 0] blength[NJUMPS-1 : 1];              // Config: bias length
+    logic[  BLENGTH-1 : 0] olength[NJUMPS-1 : 1];              // Config: output length
+    logic[ BSCALERB-1 : 0] scaler_b;                           // Config: multiplicative scaler (operand 'b')
+    logic                  usescaler_mem;                     // Config: use scalar mem if 1; otherwise use the scaler_b input for scaling
+    logic                  usebias_mem;                       // Config: use the bias memory if 1; if not, not bias is added in the scaler
+    logic[   NJUMPS-1 : 0] shacc_load_sel;                    // Config: select jump trigger for shift/accumultor load
+    logic[   NJUMPS-1 : 0] zigzag_step_sel;                   // Config: select jump trigger for stepping the zig-zag address generator  
 } mvu_cfg_signals_t;
 
 endpackage
