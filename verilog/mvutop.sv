@@ -402,14 +402,14 @@ generate for(i = 0; i < NMVU; i = i+1) begin:outaguarray
             .clr        (outagu_clr[i]                      ),
             .step       (outstep[i]                         ),
             .load       (outagu_load[i]                     ),
-            .baseaddr   (mvu_cfg.obaseaddr[i]),
+            .baseaddr   (mvu_cfg.obaseaddr[i]), // TODO tihs should use the shadow register
             .addrout    (wrd_addr[i*BDBANKA  +: BDBANKA]    )
         );
 end endgenerate
 
 // Quantizer Controllers
 generate for(i = 0; i < NMVU; i = i+1) begin: quantser_ctrlarray
-    assign quant_bwout[i*BPREC +: BQBOUT] = mvu_cfg.oprecision[i];
+    assign quant_bwout[i*BPREC +: BQBOUT] = mvu_cfg.oprecision[i]; // TODO USE THE FUCKING SHADOW REGISTER YOU CREATED
     quantser_ctrl #(
         .BWOUT      (BSCALERP)
     ) quantser_ctrl_unit (
@@ -424,7 +424,7 @@ generate for(i = 0; i < NMVU; i = i+1) begin: quantser_ctrlarray
 end endgenerate
 
 // Negate the input to the accumulators when one or both data/weights are signed and is on an MSB
-assign neg_acc = (mvu_cfg.d_signed & d_msb) ^ (mvu_cfg.w_signed & w_msb);
+assign neg_acc = (mvu_cfg.d_signed & d_msb) ^ (mvu_cfg.w_signed & w_msb); // TODO these config rgeisters should be shadowed
 
 // Trigger when the shacc should load
 generate for(i = 0; i < NMVU; i = i+1) begin: triggers
