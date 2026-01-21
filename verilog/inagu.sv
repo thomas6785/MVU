@@ -27,11 +27,12 @@ module inagu(
 );
 
 // Parameters
-parameter BPREC     = 6;                    // Bitwidth of Precision
-parameter BWBANKA   = 9;                    // Bitwidth of weight memory address
-parameter BDBANKA   = 15;                   // Bitwidth of data memory address
-parameter BWLENGTH  = 8;                    // Bitwidth of Length
-parameter NJUMPS    = 5;                    // Number of jumps
+parameter  BPREC     = 6;                    // Bitwidth of Precision
+parameter  BWBANKA   = 9;                    // Bitwidth of weight memory address
+parameter  BDBANKA   = 15;                   // Bitwidth of data memory address
+parameter  BWLENGTH  = 8;                    // Bitwidth of Length
+localparam NJUMPS    = 5;                    // Number of jumps
+parameter  BJUMP     = 15;                   // Bitwidth of Jumps
 
 // Ports
 input  wire                 clk;            // Clock
@@ -42,7 +43,7 @@ input  wire[   BPREC-1 : 0] wprecision;     // Weight Precision
 input  wire[ BDBANKA-1 : 0] ijump[NJUMPS-1 : 0];         // Input Data jumps
 input  wire[BWLENGTH-1 : 0] ilength[NJUMPS-1 : 1];       // Input Data Length
 input  wire[ BDBANKA-1 : 0] ibaseaddr;                   // Input data Base address
-input  wire[ BWBANKA-1 : 0] wjump[NJUMPS-1 : 0];         // Weight jump: 0
+input  wire[   BJUMP-1 : 0] wjump[NJUMPS-1 : 0];         // Weight jump: 0
 input  wire[BWLENGTH-1 : 0] wlength[NJUMPS-1 : 1];       // Weight Length: 1
 input  wire[ BWBANKA-1 : 0] wbaseaddr;      // Weight Base address
 input  wire[  NJUMPS-1 : 0] zigzag_step_sel;// Select the weight address jump on which the zig-zag should be stepped

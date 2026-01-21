@@ -46,16 +46,16 @@ module agu( clk,
             on_j
 );
 
-parameter BWADDR    = 21;             /* Bitwidth of Address */
-parameter BWLENGTH  = 8;
-parameter NJUMPS    = 5;              // Number of jumps
-
+parameter  BWADDR    = 21;             /* Bitwidth of Address */
+parameter  BWLENGTH  = 8;
+localparam NJUMPS    = 5;              // Number of jumps
+parameter  BJUMP     = 15;             // Bitwidth of Jumps
 
 // Ports
 input  logic                         clk;                // Clock
 input  logic                         clr;                // Clear
 input  logic                         step;               // Step
-input  logic [      BWADDR-1 : 0]    j[NJUMPS-1 : 0];    // Address jumps
+input  logic [       BJUMP-1 : 0]    j[NJUMPS-1 : 0];    // Address jumps
 input  logic [    BWLENGTH-1 : 0]    l[NJUMPS-1 : 1];    // Lengths 
 output logic [      BWADDR-1 : 0]    addr_out;           // Address generated
 output logic                         z_out[NJUMPS-1 : 1];// Signals when jump length X counter 
