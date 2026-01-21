@@ -151,7 +151,8 @@ typedef a_data_t a_data_q_t[$];
 
 // Define a structure to hold all MVU configuration signals
 typedef struct {
-    logic[          1 : 0] mul_mode[NMVU-1 : 0];               // Config: multiply mode
+	logic[     NMVU-1 : 0] start; 		       	               // Start the MVU job
+	logic[          1 : 0] mul_mode[NMVU-1 : 0];               // Config: multiply mode
     logic[     NMVU-1 : 0] d_signed;                           // Config: input data signed
     logic[     NMVU-1 : 0] w_signed;                           // Config: weights signed
     logic[     NMVU-1 : 0] max_en;                             // Config: max pool enable

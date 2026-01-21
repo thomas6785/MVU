@@ -32,57 +32,21 @@ generate for (genvar_mvu_id = 0; genvar_mvu_id < NMVU; genvar_mvu_id = genvar_mv
             mvu_cfg_shadow.sbaseaddr[genvar_mvu_id]        <= '0;
             mvu_cfg_shadow.bbaseaddr[genvar_mvu_id]        <= '0;
             mvu_cfg_shadow.obaseaddr[genvar_mvu_id]        <= '0;
-            mvu_cfg_shadow.wjump[genvar_mvu_id][0]         <= '0; // jumps and lengths for programming AGU's defaults can be zero too
-            mvu_cfg_shadow.wjump[genvar_mvu_id][1]         <= '0;
-            mvu_cfg_shadow.wjump[genvar_mvu_id][2]         <= '0;
-            mvu_cfg_shadow.wjump[genvar_mvu_id][3]         <= '0;
-            mvu_cfg_shadow.wjump[genvar_mvu_id][4]         <= '0;
-            mvu_cfg_shadow.ijump[genvar_mvu_id][0]         <= '0;
-            mvu_cfg_shadow.ijump[genvar_mvu_id][1]         <= '0;
-            mvu_cfg_shadow.ijump[genvar_mvu_id][2]         <= '0;
-            mvu_cfg_shadow.ijump[genvar_mvu_id][3]         <= '0;
-            mvu_cfg_shadow.ijump[genvar_mvu_id][4]         <= '0;
-            mvu_cfg_shadow.sjump[genvar_mvu_id][0]         <= '0;
-            mvu_cfg_shadow.sjump[genvar_mvu_id][1]         <= '0;
-            mvu_cfg_shadow.sjump[genvar_mvu_id][2]         <= '0;
-            mvu_cfg_shadow.sjump[genvar_mvu_id][3]         <= '0;
-            mvu_cfg_shadow.sjump[genvar_mvu_id][4]         <= '0;
-            mvu_cfg_shadow.bjump[genvar_mvu_id][0]         <= '0;
-            mvu_cfg_shadow.bjump[genvar_mvu_id][1]         <= '0;
-            mvu_cfg_shadow.bjump[genvar_mvu_id][2]         <= '0;
-            mvu_cfg_shadow.bjump[genvar_mvu_id][3]         <= '0;
-            mvu_cfg_shadow.bjump[genvar_mvu_id][4]         <= '0;
-            mvu_cfg_shadow.ojump[genvar_mvu_id][0]         <= '0;
-            mvu_cfg_shadow.ojump[genvar_mvu_id][1]         <= '0;
-            mvu_cfg_shadow.ojump[genvar_mvu_id][2]         <= '0;
-            mvu_cfg_shadow.ojump[genvar_mvu_id][3]         <= '0;
-            mvu_cfg_shadow.ojump[genvar_mvu_id][4]         <= '0;
-            mvu_cfg_shadow.wlength[genvar_mvu_id][1]       <= '0;
-            mvu_cfg_shadow.wlength[genvar_mvu_id][2]       <= '0;
-            mvu_cfg_shadow.wlength[genvar_mvu_id][3]       <= '0;
-            mvu_cfg_shadow.wlength[genvar_mvu_id][4]       <= '0;
-            mvu_cfg_shadow.ilength[genvar_mvu_id][1]       <= '0;
-            mvu_cfg_shadow.ilength[genvar_mvu_id][2]       <= '0;
-            mvu_cfg_shadow.ilength[genvar_mvu_id][3]       <= '0;
-            mvu_cfg_shadow.ilength[genvar_mvu_id][4]       <= '0;
-            mvu_cfg_shadow.slength[genvar_mvu_id][1]       <= '0;
-            mvu_cfg_shadow.slength[genvar_mvu_id][2]       <= '0;
-            mvu_cfg_shadow.slength[genvar_mvu_id][3]       <= '0;
-            mvu_cfg_shadow.slength[genvar_mvu_id][4]       <= '0;
-            mvu_cfg_shadow.blength[genvar_mvu_id][1]       <= '0;
-            mvu_cfg_shadow.blength[genvar_mvu_id][2]       <= '0;
-            mvu_cfg_shadow.blength[genvar_mvu_id][3]       <= '0;
-            mvu_cfg_shadow.blength[genvar_mvu_id][4]       <= '0;
-            mvu_cfg_shadow.olength[genvar_mvu_id][1]       <= '0;
-            mvu_cfg_shadow.olength[genvar_mvu_id][2]       <= '0;
-            mvu_cfg_shadow.olength[genvar_mvu_id][3]       <= '0;
-            mvu_cfg_shadow.olength[genvar_mvu_id][4]       <= '0;
+            mvu_cfg_shadow.wjump[genvar_mvu_id]            <= '{default: '0}; // jumps and lengths for programming AGU's defaults can be zero too
+            mvu_cfg_shadow.ijump[genvar_mvu_id]            <= '{default: '0};
+            mvu_cfg_shadow.sjump[genvar_mvu_id]            <= '{default: '0};
+            mvu_cfg_shadow.bjump[genvar_mvu_id]            <= '{default: '0};
+            mvu_cfg_shadow.ojump[genvar_mvu_id]            <= '{default: '0};
+            mvu_cfg_shadow.wlength[genvar_mvu_id]          <= '{default: '0};
+            mvu_cfg_shadow.ilength[genvar_mvu_id]          <= '{default: '0};
+            mvu_cfg_shadow.slength[genvar_mvu_id]          <= '{default: '0};
+            mvu_cfg_shadow.blength[genvar_mvu_id]          <= '{default: '0};
+            mvu_cfg_shadow.olength[genvar_mvu_id]          <= '{default: '0};
             mvu_cfg_shadow.wprecision[genvar_mvu_id]       <= '0;
             mvu_cfg_shadow.iprecision[genvar_mvu_id]       <= '0;
             mvu_cfg_shadow.oprecision[genvar_mvu_id]       <= '0;
             mvu_cfg_shadow.w_signed[genvar_mvu_id]         <= '0;
             mvu_cfg_shadow.d_signed[genvar_mvu_id]         <= '0;
-            mvu_cfg_shadow.countdown[genvar_mvu_id]        <= '0;
             mvu_cfg_shadow.max_en[genvar_mvu_id]           <= '0;
             mvu_cfg_shadow.max_clr[genvar_mvu_id]          <= '0;
             mvu_cfg_shadow.max_pool[genvar_mvu_id]         <= '0;
@@ -95,6 +59,13 @@ generate for (genvar_mvu_id = 0; genvar_mvu_id < NMVU; genvar_mvu_id = genvar_mv
             mvu_cfg_shadow.omvusel[genvar_mvu_id]          <= 32'(1<<genvar_mvu_id); // by default direct MVU output to itself
             mvu_cfg_shadow.usescaler_mem[genvar_mvu_id]    <= '0; // do not use scaler memory by default, use scaler_b from regmap
             mvu_cfg_shadow.usebias_mem[genvar_mvu_id]      <= '0; // do not use bias memory by default, use zero bias
+            
+            //mvu_cfg_shadow <= '{default: '0}; // most registers are set to zero // TODO fix
+            //mvu_cfg_shadow.shacc_load_sel[genvar_mvu_id]   <= 32'b00001; // TODO this should have no default value as it only makes sense to set it explicitly
+            //mvu_cfg_shadow.zigzag_step_sel[genvar_mvu_id]  <= 32'b00011;
+            //mvu_cfg_shadow.omvusel[genvar_mvu_id]          <= 32'(1<<genvar_mvu_id); // by default direct MVU output to itself
+            //mvu_cfg_shadow.scaler_b[genvar_mvu_id]         <= 32'b1; // default scaler value of 1.0
+            // note mvu_cfg_shadow has a few signals that are not used - they are written instantly to live config on a 'start' kick so shadows are not needed
         end : reset
         else if (apb_write && (mvu_id == genvar_mvu_id)) begin : write_logic
             unique case (mvu_pkg::mvu_csr_t'(register_adr[11:0]))
@@ -159,20 +130,15 @@ generate for (genvar_mvu_id = 0; genvar_mvu_id < NMVU; genvar_mvu_id = genvar_mv
                     $display("APB attempted write to read-only register CSR_MVUSTATUS!");
                 end
                 mvu_pkg::CSR_MVUCOMMAND  : begin
-                    mvu_cfg_shadow.countdown[mvu_id] <= apb.pwdata[BCNTDWN-1 : 0];
-                    mvu_cfg_shadow.max_en[mvu_id]    <= apb.pwdata[29];
-                    mvu_cfg_shadow.max_clr[mvu_id]   <= 0;
-                    mvu_cfg_shadow.max_pool[mvu_id]  <= 0;
-                    mvu_cfg_shadow.quant_clr[mvu_id] <= 0;
-                    mvu_cfg_shadow.mul_mode[mvu_id]  <= apb.pwdata[31:30];
+                    // CSR_MVUCOMMAND is the only register without shadow regs
+                    // because it implicitly kicks off the MVU on write
+                    // handled separately below
                 end
                 mvu_pkg::CSR_MVUQUANT    : begin
                     mvu_cfg_shadow.quant_msbidx[mvu_id] <= apb.pwdata[BQMSBIDX-1 : 0];
                 end
                 mvu_pkg::CSR_MVUSCALER   : begin
                     mvu_cfg_shadow.scaler_b[mvu_id] <= apb.pwdata[BSCALERB-1 : 0];
-                    // mvu_cfg_shadow.scaler1_b[mvu_id] = apb.pwdata[BSCALERB-1 : 0];
-                    // mvu_cfg_shadow.scaler2_b[mvu_id] = apb.pwdata[2*BSCALERB-1 : BSCALERB];
                 end
                 mvu_pkg::CSR_MVUCONFIG1  : begin
                     mvu_cfg_shadow.shacc_load_sel[mvu_id]  <= apb.pwdata[NJUMPS-1 : 0];
@@ -186,22 +152,28 @@ generate for (genvar_mvu_id = 0; genvar_mvu_id < NMVU; genvar_mvu_id = genvar_mv
     end : always_ff_block
 end endgenerate
 
-// Special handlin for 'start' field: self-clearing
+// Handlin for live registers
+// Special handling for 'start' field: self-clearing
 genvar i;
 generate for(i=0; i < NMVU; i = i+1) begin
     always @(posedge mvu_ext_if.clk) begin
         if (~mvu_ext_if.rst_n) begin
-            mvu_ext_if.start[i] <= 1'b0;
+            mvu_cfg_live <= '{default: '0}; // TODO fix - this should use always_ff but then we are get issues with repeat assignment. Modify the config struct to be for just one MVU
         end else begin
+            // If a write to the MVUCOMMAND register occurs for this MVU, copy the shadow register to the live config signals and set the start bit
+            // (the start signal will be delayed one cycle to allow the other config signals to propagate first)
             if (apb_write) begin
                 if (((mvu_pkg::mvu_csr_t'(register_adr[11:0])) == mvu_pkg::CSR_MVUCOMMAND) && (i==mvu_id)) begin
-                    mvu_ext_if.start[i] <= 1'b1;
                     mvu_cfg_live <= mvu_cfg_shadow; // update live config on start
+                    mvu_cfg_live.start[i] <= 1'b1; // send start signal (delayed one clock cycle)
+                    
+                    mvu_cfg_live.countdown[mvu_id] <= apb.pwdata[BCNTDWN-1 : 0];
+                    mvu_cfg_live.mul_mode[mvu_id]  <= apb.pwdata[31:30];
                 end else begin
-                    mvu_ext_if.start[i] <= 1'b0;
+                    mvu_cfg_live.start[i] <= 1'b0;
                 end
             end else begin
-                mvu_ext_if.start[i] <= 1'b0;
+                mvu_cfg_live.start[i] <= 1'b0;
             end
         end
     end

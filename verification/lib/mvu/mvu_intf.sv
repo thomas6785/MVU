@@ -1,7 +1,6 @@
 interface MVU_EXT_INTERFACE(input logic clk);
     import mvu_pkg::*;
     logic                       rst_n;                              // Global reset
-    logic[          NMVU-1 : 0] start;                              // Start the MVU job
     logic[          NMVU-1 : 0] done;                               // Indicates if a job is done
     logic[          NMVU-1 : 0] irq;                                // Interrupt request
     logic[          NMVU-1 : 0] shacc_clr;                          // Control: accumulator clear
@@ -27,7 +26,6 @@ interface MVU_EXT_INTERFACE(input logic clk);
 modport  mvu_ext (
                            input  clk,
                            input  rst_n,
-                           input  start,
                            output done,
                            output irq,
                            input  ic_clr,

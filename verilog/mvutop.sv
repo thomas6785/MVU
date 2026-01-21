@@ -15,7 +15,6 @@ module mvutop import mvu_pkg::*; (
 
 
 genvar i;
-logic[      NMVU-1 : 0] start_q; // todo aim to remove this - it should come from mvu_cfg not mvu_ext and then flopped (??)
 
 /* Local Wires */
 
@@ -170,7 +169,7 @@ assign shacc_load       = shacc_done | shacc_load_start;    // Load accumulator 
 // Clear signals (just connect to global reset for now)
 assign ic_clr_int       = !mvu_ext.rst_n | mvu_ext.ic_clr;
 assign controller_clr   = {NMVU{!mvu_ext.rst_n}};
-assign inagu_clr        = {NMVU{!mvu_ext.rst_n}} | start_q;
+assign inagu_clr        = {NMVU{!mvu_ext.rst_n}} | mvu_cfg.start;
 assign outagu_clr       = {NMVU{!mvu_ext.rst_n}};
 assign shacc_clr_int    = {NMVU{!mvu_ext.rst_n}} | mvu_ext.shacc_clr;       // Clear the accumulator
 assign scaleragu_clr    = {NMVU{!mvu_ext.rst_n}} | scaleragu_clr_dly;
@@ -188,16 +187,6 @@ generate for(i = 0; i < NMVU; i = i + 1) begin: wrd_en_array
     assign wrd_en[i] = outstep[i] & mvu_cfg.omvusel[i][i];
 end endgenerate
 
-
-// Delayed start signal to sync with the parameter buffer registers
-always @(posedge mvu_ext.clk) begin
-    if (~mvu_ext.rst_n) begin
-        start_q <= 0;
-    end else begin
-        start_q <= mvu_ext.start;
-    end
-end
-
 // Controllers
 generate for(i = 0; i < NMVU; i = i + 1) begin: controllerarray
     controller #(
@@ -205,7 +194,7 @@ generate for(i = 0; i < NMVU; i = i + 1) begin: controllerarray
     ) controller_unit (
         .clk        (mvu_ext.clk),
         .clr        (controller_clr[i]),
-        .start      (start_q[i]),
+        .start      (mvu_cfg.start[i]),
         .countdown  (mvu_cfg.countdown[i]),
         .step       (step[i]),
         .run        (run[i]),
@@ -330,7 +319,7 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
         .clk    (mvu_ext.clk), 
         .clr    (~mvu_ext.rst_n),
         .step   (1'b1),
-        .in     (start_q[i]),
+        .in     (mvu_cfg.start[i]),
         .out    (shacc_load_start[i])
     );
 
@@ -390,7 +379,7 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
         .clk    (mvu_ext.clk), 
         .clr    (~mvu_ext.rst_n),
         .step   (1'b1),
-        .in     (start_q[i]),
+        .in     (mvu_cfg.start[i]),
         .out    (scaleragu_clr_dly[i])
     );
 
@@ -410,7 +399,7 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
         .clk    (mvu_ext.clk),
         .clr    (~mvu_ext.rst_n),
         .step   (1'b1),
-        .in     (start_q[i]),
+        .in     (mvu_cfg.start[i]),
         .out    (outagu_load[i])
     );
 
