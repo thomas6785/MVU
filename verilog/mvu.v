@@ -148,7 +148,7 @@ input  wire                 scaler_clr;             // Scaler: clear/reset
 input  wire[BSCALERB-1 : 0] scaler_b;               // Scaler: multiplier operand
 input  wire                 usescaler_mem;
 input  wire                 usebias_mem;
-input  wire                 max_en;
+input  wire                 max_en; // TODO signal is not used
 input  wire                 max_clr;
 input  wire                 max_pool;
 
