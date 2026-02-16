@@ -48,20 +48,18 @@ module agu( clk,
 
 parameter  BWADDR    = 21;             /* Bitwidth of Address */
 parameter  BWLENGTH  = 8;
-localparam NJUMPS    = 5;              // Number of jumps
+localparam NJUMPS    = 5;              // Number of jumps // TODO WHY IS THIS A LOCALPARAM????
 parameter  BJUMP     = 15;             // Bitwidth of Jumps
 
 // Ports
-input  logic                         clk;                // Clock
-input  logic                         clr;                // Clear
-input  logic                         step;               // Step
-input  logic [       BJUMP-1 : 0]    j[NJUMPS-1 : 0];    // Address jumps
-input  logic [    BWLENGTH-1 : 0]    l[NJUMPS-1 : 1];    // Lengths 
-output logic [      BWADDR-1 : 0]    addr_out;           // Address generated
-output logic                         z_out[NJUMPS-1 : 1];// Signals when jump length X counter 
-output logic [      NJUMPS-1 : 0]    on_j;               // Signals when and which jump occurs
-
-
+input  logic                                clk;                // Clock
+input  logic                                clr;                // Clear
+input  logic                                step;               // Step
+input  logic signed [       BJUMP-1 : 0]    j[NJUMPS-1 : 0];    // Address jumps
+input  logic        [    BWLENGTH-1 : 0]    l[NJUMPS-1 : 1];    // Lengths 
+output logic        [      BWADDR-1 : 0]    addr_out;           // Address generated
+output logic                                z_out[NJUMPS-1 : 1];// Signals when jump length X counter 
+output logic        [      NJUMPS-1 : 0]    on_j;               // Signals when and which jump occurs
 
 /* Local logics */
 logic                            z[NJUMPS-1 : 1];
@@ -139,4 +137,63 @@ end
 
 
 /* Module end */
+endmodule
+
+// quick-and-dirty test
+module test_agu;
+
+parameter  BWADDR    = 21;
+parameter  BWLENGTH  = 8;
+localparam NJUMPS    = 5;
+parameter  BJUMP     = 15;
+logic                         clk;
+logic                         clr;
+logic                         step;
+logic [       BJUMP-1 : 0]    j[NJUMPS-1 : 0];
+logic [    BWLENGTH-1 : 0]    l[NJUMPS-1 : 1];
+logic [      BWADDR-1 : 0]    addr_out;
+logic                         z_out[NJUMPS-1 : 1];
+logic [      NJUMPS-1 : 0]    on_j;
+
+static integer fh = $fopen("output.txt", "w");
+
+always @ (posedge clk) begin
+    $display("Time: %0t | clr: %b | step: %b | l: %p | j: %p | addr_out: %p | z_out: %p | on_j: %p", $time, clr, step, l, j, addr_out, z_out, on_j);
+    if (fh != 0) begin
+        $fdisplay(fh, "%0d", addr_out);
+    end
+end
+
+initial begin
+    clk = 1;
+    forever #5 clk = ~clk;
+end
+
+initial begin
+    clr     = 1;
+    step    = 1;
+    l       = {$urandom, $urandom, $urandom, $urandom};
+    j       = {$urandom, $urandom, $urandom, $urandom, $urandom};
+    if (fh != 0) begin
+        $fdisplay(fh, "l=%p j=%p", l, j);
+    end
+    @(posedge clk)
+    clr = 0;
+    
+    repeat (1000) @(posedge clk);
+    
+    $finish;
+end
+
+agu dut (
+    .clk, // in
+    .clr, // in
+    .step, // in
+    .l, // in (config)
+    .j, // in (config)
+    .addr_out, // out
+    .z_out, // out
+    .on_j // out
+);
+
 endmodule
