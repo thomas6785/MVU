@@ -33,7 +33,7 @@ generate for (genvar_mvu_id = 0; genvar_mvu_id < NMVU; genvar_mvu_id = genvar_mv
             mvu_cfg_shadow[genvar_mvu_id].zigzag_step_sel  <= 32'b00011;
             mvu_cfg_shadow[genvar_mvu_id].omvusel          <= 32'(1<<genvar_mvu_id); // by default direct MVU output to itself
             mvu_cfg_shadow[genvar_mvu_id].scaler_b         <= 32'b1; // default scaler value of 1.0
-            // note mvu_cfg_shadow has a few signals that are not used - they are written instantly to live config on a 'start' kick so shadows are not needed
+            // note mvu_cfg_shadow has a few signals that are not used - they are written instantly to live config on a 'start' kick so shadows are not needed. Synthesis tools should be able to recognise this and strip them out
         end : reset
         else if (apb_write && (mvu_id == genvar_mvu_id)) begin : write_logic
             unique case (mvu_pkg::mvu_csr_t'(register_adr[11:0]))
@@ -120,7 +120,7 @@ generate for (genvar_mvu_id = 0; genvar_mvu_id < NMVU; genvar_mvu_id = genvar_mv
     end : always_ff_block
 end endgenerate
 
-// Handlin for live registers
+// Handling for live registers
 // Special handling for 'start' field: self-clearing
 genvar i;
 generate for(i=0; i < NMVU; i = i+1) begin
