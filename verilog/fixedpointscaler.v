@@ -30,11 +30,11 @@
      output wire    signed      [BP-1 : 0]      p               // output product
  );
 
-reg     signed      [BA-1 : 0]  a_q;
+reg     signed      [BA-1 : 0]  a_q; // TODO remove this it's not used
 reg     signed      [BB-1 : 0]  b_q;                   // note: must be signed in order for DSP to asborb the pre-add
 reg     signed      [BC-1 : 0]  c_q0;
 reg     signed      [BC-1 : 0]  c_q1;
-reg     signed      [BD-1 : 0]  d_q;
+reg     signed      [BD-1 : 0]  d_q; // TODO remove this it's not used
 reg     signed      [BA-1 : 0]  preadd_q;
 reg     signed      [BA+BB : 0]  m_q;
 reg     signed      [BP-1 : 0]  p_q;
