@@ -18,20 +18,22 @@ input  wire                 acc;
 input  wire                 sh;
 input  wire signed[a-1 : 0] I;
 
-output reg  signed[w-1 : 0] O = 0;
+output reg  signed[w-1 : 0] O;
 
 
 /* Logic */
 always @(posedge clk) begin
 	if(clr) begin
-		O = 0;
-	end else if(clk) begin
+		O <= 0;
+	end else begin
         if (load) begin
-            O = I;
+            O <= I;
         end else if (acc) begin
-            if(sh) O = O+O+I; /* Shift left of accumulator */
-            else   O = O+I;   /* Plain accumulate */
-        end
+            if(sh) O <= (O<<1)+I; /* Shift left of accumulator */
+            else   O <= O+I;   /* Plain accumulate */
+		end else begin
+			O <= O; // hold value
+		end
 	end
 end
 
