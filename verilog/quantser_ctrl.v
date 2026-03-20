@@ -15,7 +15,8 @@ module quantser_ctrl #(
     output  wire                    load,    // Load the output shift register
     output  wire                    step     // Step the output shift register
 );
-
+// TODO this is problematic: bwout should have width equal to the precision bitwidth used at the register map i.e. bwbwout = 6
+// TODO then BWOUT_MAX can be used to reject anything larger than the max internal bitwidth (maybe)
 
 // Internal registers
 reg     [BWBWOUT-1 : 0]   counter;          // Countdown counter
