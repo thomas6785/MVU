@@ -425,6 +425,7 @@ generate for(i=0;i<BDBANKW;i=i+1) begin:reduxrdwords
         rdd_word[i] <= |rdd_words_t[i*NDBANK +: NDBANK];
         rdi_word[i] <= |rdi_words_t[i*NDBANK +: NDBANK];
         rdc_word[i] <= |rdc_words_t[i*NDBANK +: NDBANK];
+         // TODO ORing data is problematic - what if the RAM doesn't give zero when not reading? Intel RAM model doesn't even have a read pin
     end
 end endgenerate
 
