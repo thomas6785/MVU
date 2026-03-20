@@ -82,7 +82,7 @@ always @(posedge clk) begin
         sh = 0;
     end
 end
-
+// TODO refactor this entirely. Shouldn't be using blocking assignments. I'd swear the original devs had never written HDL before
 
 
 /* Module end */
