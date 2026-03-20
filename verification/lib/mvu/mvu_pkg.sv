@@ -63,80 +63,80 @@ localparam time APB_TestTime  = 8ns; //
 
 
 typedef enum logic [11:0] {
-	CSR_MVUWBASEPTR=12'hf20,//Base address for weight memory
-	CSR_MVUIBASEPTR=12'hf21,//Base address for input memory
-	CSR_MVUSBASEPTR=12'hf22,//Base address for scaler memory (6 bits)
-	CSR_MVUBBASEPTR=12'hf23,//Base address for bias memory (6 bits)
-	CSR_MVUOBASEPTR=12'hf24,//Output base address
-	CSR_MVUWJUMP_0=12'hf25,//Weight address jumps in loops 0
-	CSR_MVUWJUMP_1=12'hf26,//Weight address jumps in loops 1
-	CSR_MVUWJUMP_2=12'hf27,//Weight address jumps in loops 2
-	CSR_MVUWJUMP_3=12'hf28,//Weight address jumps in loops 3
-	CSR_MVUWJUMP_4=12'hf29,//Weight address jumps in loops 4
-	CSR_MVUIJUMP_0=12'hf2a,//Input data address jumps in loops 0
-	CSR_MVUIJUMP_1=12'hf2b,//Input data address jumps in loops 1
-	CSR_MVUIJUMP_2=12'hf2c,//Input data address jumps in loops 2
-	CSR_MVUIJUMP_3=12'hf2d,//Input data address jumps in loops 3
-	CSR_MVUIJUMP_4=12'hf2e,//Input data address jumps in loops 4
-	CSR_MVUSJUMP_0=12'hf2f,//Scaler memory address jumps (6 bits)
-	CSR_MVUSJUMP_1=12'hf30,//Scaler memory address jumps (6 bits)
-	CSR_MVUSJUMP_2=12'hf31,//Scaler memory address jumps (6 bits)
-	CSR_MVUSJUMP_3=12'hf32,//Scaler memory address jumps (6 bits)
-	CSR_MVUSJUMP_4=12'hf33,//Scaler memory address jumps (6 bits)
-	CSR_MVUBJUMP_0=12'hf34,//Bias memory address jumps (6 bits)
-	CSR_MVUBJUMP_1=12'hf35,//Bias memory address jumps (6 bits)
-	CSR_MVUBJUMP_2=12'hf36,//Bias memory address jumps (6 bits)
-	CSR_MVUBJUMP_3=12'hf37,//Bias memory address jumps (6 bits)
-	CSR_MVUBJUMP_4=12'hf38,//Bias memory address jumps (6 bits)
-	CSR_MVUOJUMP_0=12'hf39,//Output data address jumps in loops 0
-	CSR_MVUOJUMP_1=12'hf3a,//Output data address jumps in loops 1
-	CSR_MVUOJUMP_2=12'hf3b,//Output data address jumps in loops 2
-	CSR_MVUOJUMP_3=12'hf3c,//Output data address jumps in loops 3
-	CSR_MVUOJUMP_4=12'hf3d,//Output data address jumps in loops 4
-	CSR_MVUWLENGTH_0=12'hf3e,//Weight length in loops 0
-	CSR_MVUWLENGTH_1=12'hf3f,//Weight length in loops 1
-	CSR_MVUWLENGTH_2=12'hf40,//Weight length in loops 2
-	CSR_MVUWLENGTH_3=12'hf41,//Weight length in loops 3
-	CSR_MVUWLENGTH_4=12'hf42,//Weight length in loops 3
-	CSR_MVUILENGTH_1=12'hf43,//Input data length in loops 0
-	CSR_MVUILENGTH_2=12'hf44,//Input data length in loops 1
-	CSR_MVUILENGTH_3=12'hf45,//Input data length in loops 2
-	CSR_MVUILENGTH_4=12'hf46,//Input data length in loops 3
-	CSR_MVUSLENGTH_1=12'hf47,//Scaler tensor length 15 bits
-	CSR_MVUSLENGTH_2=12'hf48,//Scaler tensor length 15 bits
-	CSR_MVUSLENGTH_3=12'hf49,//Scaler tensor length 15 bits
-	CSR_MVUSLENGTH_4=12'hf4a,//Scaler tensor length 15 bits
-	CSR_MVUBLENGTH_1=12'hf4b,//Bias tensor length 15 bits
-	CSR_MVUBLENGTH_2=12'hf4c,//Bias tensor length 15 bits
-	CSR_MVUBLENGTH_3=12'hf4d,//Bias tensor length 15 bits
-	CSR_MVUBLENGTH_4=12'hf4e,//Bias tensor length 15 bits
-	CSR_MVUOLENGTH_1=12'hf4f,//Output data length in loops 0
-	CSR_MVUOLENGTH_2=12'hf50,//Output data length in loops 1
-	CSR_MVUOLENGTH_3=12'hf51,//Output data length in loops 2
-	CSR_MVUOLENGTH_4=12'hf52,//Output data length in loops 3
-	CSR_MVUPRECISION=12'hf53,//Precision in bits for all tensors
-	CSR_MVUSTATUS=12'hf54,//Status of MVU
-	CSR_MVUCOMMAND=12'hf55,//Kick to send command.
-	CSR_MVUQUANT=12'hf56,//MSB index position
-	CSR_MVUSCALER =12'hf57,//fixed point operand for multiplicative scaling
-	CSR_MVUCONFIG1=12'hf58,//Shift/accumulator load on jump select (only 0-4 valid) Pool/Activation clear on jump select (only 0-4 valid)
-	CSR_MVUOMVUSEL=12'hf59,//MVU selector bits for output
-	CSR_MVUIHPBASEADDR=12'hf5a,//high-precision data memory base address for input
-	CSR_MVUOHPBASEADDR=12'hf5b,//high-precision data memory base address for output
-	CSR_MVUOHPMVUSEL=12'hf5c,//MVU selector bits for high-precision output
-	CSR_MVUHPJUMP_0=12'hf5d,//Input jumps
-	CSR_MVUHPJUMP_1=12'hf5e,//Input jumps
-	CSR_MVUHPJUMP_2=12'hf5f,//Input jumps
-	CSR_MVUHPJUMP_3=12'hf60,//Input jumps
-	CSR_MVUHPJUMP_4=12'hf61,//Input jumps
-	CSR_MVUHPLENGTH_1=12'hf62,//Scaler length
-	CSR_MVUHPLENGTH_2=12'hf63,//Scaler length
-	CSR_MVUHPLENGTH_3=12'hf64,//Scaler length
-	CSR_MVUHPLENGTH_4=12'hf65,//Scaler length
-	CSR_MVUUSESCALER_MEM=12'hf66,//Use scalar mem if 1; otherwise use the scaler_b input for scaling
-	CSR_MVUUSEBIAS_MEM=12'hf67,//Use the bias memory if 1; if not, not bias is added in the scaler
-	CSR_MVUUSEPOOLER4HPOUT=12'hf68,//For the high-precision interconnect, use the output of pooler if 1, or use output of scaler1 if 0
-	CSR_MVUUSEHPADDER=12'hf69//Use the hpadder if 1
+	CSR_MVUWBASEPTR         = 12'hf20,  //Base address for weight memory
+	CSR_MVUIBASEPTR         = 12'hf21,  //Base address for input memory
+	CSR_MVUSBASEPTR         = 12'hf22,  //Base address for scaler memory (6 bits)
+	CSR_MVUBBASEPTR         = 12'hf23,  //Base address for bias memory (6 bits)
+	CSR_MVUOBASEPTR         = 12'hf24,  //Output base address
+	CSR_MVUWJUMP_0          = 12'hf25,  //Weight address jumps in loops 0
+	CSR_MVUWJUMP_1          = 12'hf26,  //Weight address jumps in loops 1
+	CSR_MVUWJUMP_2          = 12'hf27,  //Weight address jumps in loops 2
+	CSR_MVUWJUMP_3          = 12'hf28,  //Weight address jumps in loops 3
+	CSR_MVUWJUMP_4          = 12'hf29,  //Weight address jumps in loops 4
+	CSR_MVUIJUMP_0          = 12'hf2a,  //Input data address jumps in loops 0
+	CSR_MVUIJUMP_1          = 12'hf2b,  //Input data address jumps in loops 1
+	CSR_MVUIJUMP_2          = 12'hf2c,  //Input data address jumps in loops 2
+	CSR_MVUIJUMP_3          = 12'hf2d,  //Input data address jumps in loops 3
+	CSR_MVUIJUMP_4          = 12'hf2e,  //Input data address jumps in loops 4
+	CSR_MVUSJUMP_0          = 12'hf2f,  //Scaler memory address jumps (6 bits)
+	CSR_MVUSJUMP_1          = 12'hf30,  //Scaler memory address jumps (6 bits)
+	CSR_MVUSJUMP_2          = 12'hf31,  //Scaler memory address jumps (6 bits)
+	CSR_MVUSJUMP_3          = 12'hf32,  //Scaler memory address jumps (6 bits)
+	CSR_MVUSJUMP_4          = 12'hf33,  //Scaler memory address jumps (6 bits)
+	CSR_MVUBJUMP_0          = 12'hf34,  //Bias memory address jumps (6 bits)
+	CSR_MVUBJUMP_1          = 12'hf35,  //Bias memory address jumps (6 bits)
+	CSR_MVUBJUMP_2          = 12'hf36,  //Bias memory address jumps (6 bits)
+	CSR_MVUBJUMP_3          = 12'hf37,  //Bias memory address jumps (6 bits)
+	CSR_MVUBJUMP_4          = 12'hf38,  //Bias memory address jumps (6 bits)
+	CSR_MVUOJUMP_0          = 12'hf39,  //Output data address jumps in loops 0
+	CSR_MVUOJUMP_1          = 12'hf3a,  //Output data address jumps in loops 1
+	CSR_MVUOJUMP_2          = 12'hf3b,  //Output data address jumps in loops 2
+	CSR_MVUOJUMP_3          = 12'hf3c,  //Output data address jumps in loops 3
+	CSR_MVUOJUMP_4          = 12'hf3d,  //Output data address jumps in loops 4
+	CSR_MVUWLENGTH_0        = 12'hf3e,  //Weight length in loops 0
+	CSR_MVUWLENGTH_1        = 12'hf3f,  //Weight length in loops 1
+	CSR_MVUWLENGTH_2        = 12'hf40,  //Weight length in loops 2
+	CSR_MVUWLENGTH_3        = 12'hf41,  //Weight length in loops 3
+	CSR_MVUWLENGTH_4        = 12'hf42,  //Weight length in loops 3
+	CSR_MVUILENGTH_1        = 12'hf43,  //Input data length in loops 0
+	CSR_MVUILENGTH_2        = 12'hf44,  //Input data length in loops 1
+	CSR_MVUILENGTH_3        = 12'hf45,  //Input data length in loops 2
+	CSR_MVUILENGTH_4        = 12'hf46,  //Input data length in loops 3
+	CSR_MVUSLENGTH_1        = 12'hf47,  //Scaler tensor length 15 bits
+	CSR_MVUSLENGTH_2        = 12'hf48,  //Scaler tensor length 15 bits
+	CSR_MVUSLENGTH_3        = 12'hf49,  //Scaler tensor length 15 bits
+	CSR_MVUSLENGTH_4        = 12'hf4a,  //Scaler tensor length 15 bits
+	CSR_MVUBLENGTH_1        = 12'hf4b,  //Bias tensor length 15 bits
+	CSR_MVUBLENGTH_2        = 12'hf4c,  //Bias tensor length 15 bits
+	CSR_MVUBLENGTH_3        = 12'hf4d,  //Bias tensor length 15 bits
+	CSR_MVUBLENGTH_4        = 12'hf4e,  //Bias tensor length 15 bits
+	CSR_MVUOLENGTH_1        = 12'hf4f,  //Output data length in loops 0
+	CSR_MVUOLENGTH_2        = 12'hf50,  //Output data length in loops 1
+	CSR_MVUOLENGTH_3        = 12'hf51,  //Output data length in loops 2
+	CSR_MVUOLENGTH_4        = 12'hf52,  //Output data length in loops 3
+	CSR_MVUPRECISION        = 12'hf53,  //Precision in bits for all tensors
+	CSR_MVUSTATUS           = 12'hf54,  //Status of MVU
+	CSR_MVUCOMMAND          = 12'hf55,  //Kick to send command.
+	CSR_MVUQUANT            = 12'hf56,  //MSB index position
+	CSR_MVUSCALER           = 12'hf57,  //fixed point operand for multiplicative scaling
+	CSR_MVUCONFIG1          = 12'hf58,  //Shift/accumulator load on jump select (only 0-4 valid) Pool/Activation clear on jump select (only 0-4 valid)
+	CSR_MVUOMVUSEL          = 12'hf59,  //MVU selector bits for output
+	CSR_MVUIHPBASEADDR      = 12'hf5a,  //high-precision data memory base address for input
+	CSR_MVUOHPBASEADDR      = 12'hf5b,  //high-precision data memory base address for output
+	CSR_MVUOHPMVUSEL        = 12'hf5c,  //MVU selector bits for high-precision output
+	CSR_MVUHPJUMP_0         = 12'hf5d,  //Input jumps
+	CSR_MVUHPJUMP_1         = 12'hf5e,  //Input jumps
+	CSR_MVUHPJUMP_2         = 12'hf5f,  //Input jumps
+	CSR_MVUHPJUMP_3         = 12'hf60,  //Input jumps
+	CSR_MVUHPJUMP_4         = 12'hf61,  //Input jumps
+	CSR_MVUHPLENGTH_1       = 12'hf62,  //Scaler length
+	CSR_MVUHPLENGTH_2       = 12'hf63,  //Scaler length
+	CSR_MVUHPLENGTH_3       = 12'hf64,  //Scaler length
+	CSR_MVUHPLENGTH_4       = 12'hf65,  //Scaler length
+	CSR_MVUUSESCALER_MEM    = 12'hf66,  //Use scalar mem if 1; otherwise use the scaler_b input for scaling
+	CSR_MVUUSEBIAS_MEM      = 12'hf67,  //Use the bias memory if 1; if not, not bias is added in the scaler
+	CSR_MVUUSEPOOLER4HPOUT  = 12'hf68,  //For the high-precision interconnect, use the output of pooler if 1, or use output of scaler1 if 0
+	CSR_MVUUSEHPADDER       = 12'hf69   //Use the hpadder if 1
 } mvu_csr_t;
 
 typedef logic [APB_ADDR_WIDTH-1:0] apb_addr_t;
@@ -151,40 +151,41 @@ typedef a_data_t a_data_q_t[$];
 
 // Define a structure to hold all MVU configuration signals
 typedef struct {
-	logic                  start; 		       	               // Start the MVU job
-	logic[          1 : 0] mul_mode;            			   // Config: multiply mode
-    logic                  d_signed;                           // Config: input data signed
-    logic                  w_signed;                           // Config: weights signed
-    logic                  max_en;                             // Config: max pool enable
-    logic                  max_clr;                            // Config: max pool clear
-    logic                  quant_clr;                          // Quantizer: clear
-    logic                  max_pool;                           // Config: max pool mode
-    logic[ BQMSBIDX-1 : 0] quant_msbidx;                       // Quantizer: bit position index of the MSB
-    logic[  BCNTDWN-1 : 0] countdown;                          // Config: number of clocks to countdown for given task
-    logic[    BPREC-1 : 0] wprecision;                         // Config: weight precision
-    logic[    BPREC-1 : 0] iprecision;                         // Config: input precision
-    logic[    BPREC-1 : 0] oprecision;                         // Config: output precision
-    logic[  BBWADDR-1 : 0] wbaseaddr;                          // Config: weight memory base address
-    logic[  BBDADDR-1 : 0] ibaseaddr;                          // Config: data memory base address for input
-    logic[  BSBANKA-1 : 0] sbaseaddr;                          // Config: scaler memory base address
-    logic[  BBBANKA-1 : 0] bbaseaddr;                          // Config: bias memory base address
-    logic[  BBDADDR-1 : 0] obaseaddr;                          // Config: data memory base address for output
-    logic[     NMVU-1 : 0] omvusel;                            // Config: MVU selector bits for output
-    logic[    BJUMP-1 : 0] wjump[NJUMPS-1 : 0];                // Config: weight jumps
-    logic[    BJUMP-1 : 0] ijump[NJUMPS-1 : 0];                // Config: input jumps
-    logic[    BJUMP-1 : 0] sjump[NJUMPS-1 : 0];                // Config: scaler jumps
-    logic[    BJUMP-1 : 0] bjump[NJUMPS-1 : 0];                // Config: bias jumps
-    logic[    BJUMP-1 : 0] ojump[NJUMPS-1 : 0];                // Config: output jumps
-    logic[  BLENGTH-1 : 0] wlength[NJUMPS-1 : 1];              // Config: weight lengths
-    logic[  BLENGTH-1 : 0] ilength[NJUMPS-1 : 1];              // Config: input length
-    logic[  BLENGTH-1 : 0] slength[NJUMPS-1 : 1];              // Config: scaler length
-    logic[  BLENGTH-1 : 0] blength[NJUMPS-1 : 1];              // Config: bias length
-    logic[  BLENGTH-1 : 0] olength[NJUMPS-1 : 1];              // Config: output length
-    logic[ BSCALERB-1 : 0] scaler_b;                           // Config: multiplicative scaler (operand 'b')
-    logic                  usescaler_mem;                     // Config: use scalar mem if 1; otherwise use the scaler_b input for scaling
-    logic                  usebias_mem;                       // Config: use the bias memory if 1; if not, not bias is added in the scaler
-    logic[   NJUMPS-1 : 0] shacc_load_sel;                    // Config: select jump trigger for shift/accumultor load
-    logic[   NJUMPS-1 : 0] zigzag_step_sel;                   // Config: select jump trigger for stepping the zig-zag address generator  
+	logic                          start; 		       	               // Start the MVU job
+	logic        [          1 : 0] mul_mode;            			   // Config: multiply mode
+    logic                          d_signed;                           // Config: input data signed
+    logic                          w_signed;                           // Config: weights signed
+    logic                          max_en;                             // Config: max pool enable
+    logic                          max_clr;                            // Config: max pool clear
+    logic                          quant_clr;                          // Quantizer: clear
+    logic                          max_pool;                           // Config: max pool mode
+    logic        [ BQMSBIDX-1 : 0] quant_msbidx;                       // Quantizer: bit position index of the MSB
+    logic        [  BCNTDWN-1 : 0] countdown;                          // Config: number of clocks to countdown for given task
+    logic        [    BPREC-1 : 0] wprecision;                         // Config: weight precision
+    logic        [    BPREC-1 : 0] iprecision;                         // Config: input precision
+    logic        [    BPREC-1 : 0] oprecision;                         // Config: output precision
+    logic        [  BBWADDR-1 : 0] wbaseaddr;                          // Config: weight memory base address
+    logic        [  BBDADDR-1 : 0] ibaseaddr;                          // Config: data memory base address for input
+    logic        [  BSBANKA-1 : 0] sbaseaddr;                          // Config: scaler memory base address
+    logic        [  BBBANKA-1 : 0] bbaseaddr;                          // Config: bias memory base address
+    logic        [  BBDADDR-1 : 0] obaseaddr;                          // Config: data memory base address for output
+    logic        [     NMVU-1 : 0] omvusel;                            // Config: MVU selector bits for output
+    logic signed [    BJUMP-1 : 0] wjump[NJUMPS-1 : 0];                // Config: weight jumps
+    logic signed [    BJUMP-1 : 0] ijump[NJUMPS-1 : 0];                // Config: input jumps
+    logic signed [    BJUMP-1 : 0] sjump[NJUMPS-1 : 0];                // Config: scaler jumps
+    logic signed [    BJUMP-1 : 0] bjump[NJUMPS-1 : 0];                // Config: bias jumps
+    logic        [    BJUMP-1 : 0] ojump[NJUMPS-1 : 0];                // Config: output jumps
+    logic        [  BLENGTH-1 : 0] wlength[NJUMPS-1 : 1];              // Config: weight lengths
+    logic        [  BLENGTH-1 : 0] ilength[NJUMPS-1 : 1];              // Config: input length
+    logic        [  BLENGTH-1 : 0] slength[NJUMPS-1 : 1];              // Config: scaler length
+    logic        [  BLENGTH-1 : 0] blength[NJUMPS-1 : 1];              // Config: bias length
+    logic        [  BLENGTH-1 : 0] olength[NJUMPS-1 : 1];              // Config: output length
+    logic        [ BSCALERB-1 : 0] scaler_b;                           // Config: multiplicative scaler (operand 'b')
+    logic                          usescaler_mem;                      // Config: use scalar mem if 1; otherwise use the scaler_b input for scaling
+    logic                          usebias_mem;                        // Config: use the bias memory if 1; if not, not bias is added in the scaler
+    logic        [   NJUMPS-1 : 0] shacc_load_sel;                     // Config: select jump trigger for shift/accumultor load
+    logic        [   NJUMPS-1 : 0] zigzag_step_sel;                    // Config: select jump trigger for stepping the zig-zag address generator  
+	logic        [   NJUMPS-1 : 0] pool_load_sel;                      // Config: select jump trigger for loading new value into the max pooler. For no pooling, set all 1's
 } mvu_cfg_signals_t;
 
 endpackage
