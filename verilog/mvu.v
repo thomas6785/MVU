@@ -366,10 +366,17 @@ end endgenerate
 
 
 /* Max poolers */
+assign relu_en       = max_en;
+assign maxpool_load = ~max_clr; // TODO remove this hack
 generate for(i=0;i<N;i=i+1) begin:poolarray
-    maxpool #(BSCALERP)       pooler     (clk, max_clr, max_pool,
-                                      scaler_out [i],
-                                      pool_out[i]);
+    maxpool #(BSCALERP) pooler (
+        .clk(clk),
+        .relu_en(relu_en),
+        .maxpool_load(maxpool_load),
+        .din_valid(), // TODO logic for this signal. Should generally be 0, but go to 1 at the end of each accumulation phase
+        .din(scaler_out[i]),
+        .dout(pool_out[i])
+);
 end endgenerate
 
 
