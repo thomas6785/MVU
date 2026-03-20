@@ -265,7 +265,7 @@ assign rdw_en = run;
 always @(posedge clk) core_weights <= rdw_word;
 
 `ifdef INTEL
-    bram2m          weights_bank (clk, {BWBANKW{1'b0}}, rdw_addr, {BWBANKA{1'b0}}, 1'b0, core_weights);
+    bram2m          weights_bank (clk, {BWBANKW{1'b0}}, rdw_addr, {BWBANKA{1'b0}}, 1'b0, rdw_word);
 `elsif XILINX_BRAM_IP
     bram2m_xilinx   weights_bank (
         .clka	(clk),			// input wire clka
@@ -276,7 +276,7 @@ always @(posedge clk) core_weights <= rdw_word;
         .clkb	(clk),			// input wire clkb
         .enb	(1'b1),			// always enable the read port
         .addrb	(rdw_addr),		// read address from address generator
-        .doutb	(core_weights)	// weight word to MVU core        
+        .doutb	(rdw_word)	// weight word to MVU core        
     );
 `else
     ram_simple2port #(
