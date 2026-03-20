@@ -100,12 +100,8 @@ logic[        NMVU-1 : 0] outagu_clr;        // Clear the output AGU
 logic[        NMVU-1 : 0] outagu_load;       // Load the output AGU base address
 logic[      NJUMPS-1 : 0] wagu_on_j[NMVU-1 : 0];      // Indicates when a weight address jump X
 logic[        NMVU-1 : 0] scaleragu_step;    // Steps the scaler memory AGU
-logic[        NMVU-1 : 0] biasagu_step;      // Steps the bias memory AGU
 logic[        NMVU-1 : 0] scaleragu_clr;     // Clears the state of the Scaler memory AGU
-logic[        NMVU-1 : 0] biasagu_clr;       // Clears the state of the bias memory AGU
 logic[        NMVU-1 : 0] scaleragu_clr_dly; // Clears the state of the Scaler memory AGU
-logic[        NMVU-1 : 0] biasagu_clr_dly;   // Clears the state of the bias memory AGU
-
 
 /*
 * Wiring 
@@ -167,12 +163,11 @@ assign run_acc          = run;                              // No stalls for now
 assign shacc_load       = shacc_done | shacc_load_start;    // Load accumulator with current output of MVP's
 
 // Clear signals (just connect to global reset for now)
-assign ic_clr_int       = !mvu_ext.rst_n | mvu_ext.ic_clr;
+assign ic_clr_int       = !mvu_ext.rst_n;
 assign controller_clr   = {NMVU{!mvu_ext.rst_n}};
 assign outagu_clr       = {NMVU{!mvu_ext.rst_n}};
-assign shacc_clr_int    = {NMVU{!mvu_ext.rst_n}} | mvu_ext.shacc_clr;       // Clear the accumulator // TODO remove this pointless signal and similar ones
+assign shacc_clr_int    = {NMVU{!mvu_ext.rst_n}};       // Clear the accumulator
 assign scaleragu_clr    = {NMVU{!mvu_ext.rst_n}} | scaleragu_clr_dly;
-assign biasagu_clr      = {NMVU{!mvu_ext.rst_n}} | biasagu_clr_dly;
 assign scaler_clr       = {NMVU{!mvu_ext.rst_n}};
 
 generate for(i = 0; i < NMVU; i = i + 1) begin: maxclrarry

@@ -3,8 +3,6 @@ interface MVU_EXT_INTERFACE(input logic clk);
     logic                       rst_n;                              // Global reset
     logic[          NMVU-1 : 0] done;                               // Indicates if a job is done
     logic[          NMVU-1 : 0] irq;                                // Interrupt request
-    logic[          NMVU-1 : 0] shacc_clr;                          // Control: accumulator clear
-    logic                       ic_clr;                             // Interconnect: clear
     logic[  NMVU*BWBANKA-1 : 0] wrw_addr;                           // Weight memory: write address
     logic[  NMVU*BWBANKW-1 : 0] wrw_word;                           // Weight memory: write word
     logic[          NMVU-1 : 0] wrw_en;                             // Weight memory: write enable
@@ -28,8 +26,6 @@ modport  mvu_ext (
                            input  rst_n,
                            output done,
                            output irq,
-                           input  ic_clr,
-                           input  shacc_clr,
                            input  wrw_addr,
                            input  wrw_word,
                            input  wrw_en,
