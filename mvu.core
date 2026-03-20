@@ -1,5 +1,5 @@
 CAPI=2:
-name : ::mvu:0
+name: ::mvu:0
 description: Matrix Vector Unit engine Low-Precision Arithmetic in Neural Networks
 
 filesets:
@@ -46,6 +46,8 @@ filesets:
             - verilog/agu.sv:
                 file_type: systemVerilogSource
             - verilog/mvutop.sv:
+                file_type: systemVerilogSource
+            - verilog/mvutop_wrapper.sv:
                 file_type: systemVerilogSource
     synth_xilinx_bram_ip:
         file_type: xci
