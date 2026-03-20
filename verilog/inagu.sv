@@ -35,24 +35,24 @@ localparam NJUMPS    = 5;                    // Number of jumps
 parameter  BJUMP     = 15;                   // Bitwidth of Jumps
 
 // Ports
-input  wire                 clk;            // Clock
-input  wire                 clr;            // Clear
-input  wire                 en;             // Enable
-input  wire[   BPREC-1 : 0] iprecision;     // Input Data Precision
-input  wire[   BPREC-1 : 0] wprecision;     // Weight Precision
-input  wire[ BDBANKA-1 : 0] ijump[NJUMPS-1 : 0];         // Input Data jumps
-input  wire[BWLENGTH-1 : 0] ilength[NJUMPS-1 : 1];       // Input Data Length
-input  wire[ BDBANKA-1 : 0] ibaseaddr;                   // Input data Base address
-input  wire[   BJUMP-1 : 0] wjump[NJUMPS-1 : 0];         // Weight jump: 0
-input  wire[BWLENGTH-1 : 0] wlength[NJUMPS-1 : 1];       // Weight Length: 1
-input  wire[ BWBANKA-1 : 0] wbaseaddr;      // Weight Base address
-input  wire[  NJUMPS-1 : 0] zigzag_step_sel;// Select the weight address jump on which the zig-zag should be stepped
-output wire[ BDBANKA-1 : 0] iaddr_out;      // Input Data Address generated
-output wire[ BWBANKA-1 : 0] waddr_out;      // Weight Address generated
-output wire                 imsb;           // Input data is address currently on MSB
-output wire                 wmsb;           // Weight address is currently on MSB
-output wire                 sh_out;         // Shift occurred
-output wire  [NJUMPS-1 : 0] wagu_on_j;      // Weight address jumps happened
+input  wire                        clk;            // Clock
+input  wire                        clr;            // Clear
+input  wire                        en;             // Enable
+input  wire       [   BPREC-1 : 0] iprecision;     // Input Data Precision
+input  wire       [   BPREC-1 : 0] wprecision;     // Weight Precision
+input  wire signed [ BDBANKA-1 : 0] ijump[NJUMPS-1 : 0];         // Input Data jumps
+input  wire       [BWLENGTH-1 : 0] ilength[NJUMPS-1 : 1];       // Input Data Length
+input  wire       [ BDBANKA-1 : 0] ibaseaddr;                   // Input data Base address
+input  wire signed [   BJUMP-1 : 0] wjump[NJUMPS-1 : 0];         // Weight jump: 0
+input  wire       [BWLENGTH-1 : 0] wlength[NJUMPS-1 : 1];       // Weight Length: 1
+input  wire       [ BWBANKA-1 : 0] wbaseaddr;      // Weight Base address
+input  wire       [  NJUMPS-1 : 0] zigzag_step_sel;// Select the weight address jump on which the zig-zag should be stepped
+output wire       [ BDBANKA-1 : 0] iaddr_out;      // Input Data Address generated
+output wire       [ BWBANKA-1 : 0] waddr_out;      // Weight Address generated
+output wire                        imsb;           // Input data is address currently on MSB
+output wire                        wmsb;           // Weight address is currently on MSB
+output wire                        sh_out;         // Shift occurred
+output wire         [NJUMPS-1 : 0] wagu_on_j;      // Weight address jumps happened
 
 
 // AGU wires
