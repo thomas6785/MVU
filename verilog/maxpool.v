@@ -4,33 +4,29 @@
 
 `timescale 1ns/1ps
 /**** Module ****/
-module maxpool(clk, max_clr, max_pool, I, O);
+module maxpool #(
+    parameter N = 32
+) (
+    input  wire                 clk,
+    input  wire                 relu_en, // enables ReLU - otherwise passthrough din to maxpooler
+    input  wire                 maxpool_load, // when high, loads din into output register. When low, output is max of din and its previous value. Tie high for no pooling
+    input  wire                 din_valid, // data in is not always valid due to shacc behaviour so don't do any pooling with invalid values
+    input  wire signed[N-1 : 0] din,
+    output reg  signed[N-1 : 0] dout = 0
+);
 
+wire signed[N-1 : 0] after_relu;
 
-/* Parameters */
-parameter N = 32;
+assign after_relu = relu_en ? (din > 0 ? din : 0) : din; /* ReLU operation */
 
-input  wire                 clk;
-input  wire                 max_clr;
-input  wire                 max_pool;
-input  wire signed[N-1 : 0] I;
-output reg  signed[N-1 : 0] O = 0;
-
-
-/* Logic */
-always @(posedge clk) begin
-    if(max_clr) begin
-        O <= 0;
-    end 
-    if(max_pool) begin
-        /* O = max(O,I) */
-        if(I>O) begin
-            O <= I;
-        end else begin
-            O <= O;
-        end
+/* Max pooling */
+always @(posedge clk) begin // TODO implement a reset signal
+    if(maxpool_load) begin
+        dout <= after_relu; // Tie load to 1 for no pooling
+    end else if (din_valid) begin
+        dout <= after_relu > dout ? after_relu : dout; // max(after_relu, dout)
     end else begin
-        O <= I; /* Plain set */
+        dout <= dout; // hold value if din is not valid
     end
 end
 
