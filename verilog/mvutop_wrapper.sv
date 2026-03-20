@@ -30,7 +30,7 @@ generate for (genvar_mvu_id = 0; genvar_mvu_id < NMVU; genvar_mvu_id = genvar_mv
 
             // Some default values, TODO remove these, they should really be set by the software
             mvu_cfg_shadow[genvar_mvu_id].shacc_load_sel   <= 32'b00001;
-            mvu_cfg_shadow[genvar_mvu_id].zigzag_step_sel  <= 32'b00011;
+            mvu_cfg_shadow[genvar_mvu_id].zigzag_step_sel  <= 32'b01111;
             mvu_cfg_shadow[genvar_mvu_id].omvusel          <= 32'(1<<genvar_mvu_id); // by default direct MVU output to itself
             mvu_cfg_shadow[genvar_mvu_id].scaler_b         <= 32'b1; // default scaler value of 1.0
             // note mvu_cfg_shadow has a few signals that are not used - they are written instantly to live config on a 'start' kick so shadows are not needed. Synthesis tools should be able to recognise this and strip them out
