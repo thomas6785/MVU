@@ -20,11 +20,10 @@ reg [N-1 : 0] sr;
 // Shifter
 always @(posedge clk) begin
     if (clr) begin
-        sr = 0;
+        sr <= 0;
     end else begin
         if (step) begin
-            sr = sr << 1;
-            sr[0] = in;
+            sr <= {sr[N-2:0], in};
         end
     end
 end

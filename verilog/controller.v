@@ -84,7 +84,7 @@ always @(posedge clk) begin
     if (clr) begin
 
         // Clear registers
-        counter_q = 0;
+        counter_q <= 0;
 
     end else begin
 
