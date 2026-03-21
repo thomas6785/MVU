@@ -398,11 +398,12 @@ generate for(i=0;i<N;i=i+1) begin:quantarray
 end endgenerate
 
 
+// TODO refactor these banks, what the hell were they doing? The collision detection can handle MUXing the addr and wdata signals, and there's no need to have three identical rdata signals
 /* Data Banks */
 generate for(i=0;i<NDBANK;i=i+1) begin:bankarray
-    wire                rdi_bankhit = rdi_addr[BDBANKAWS +: BDBANKABS] == i;
-    wire                rdd_bankhit = rdd_addr[BDBANKAWS +: BDBANKABS] == i;
-    wire                rdc_bankhit = rdc_addr[BDBANKAWS +: BDBANKABS] == i;
+    wire                rdi_bankhit = rdi_grnt & (rdi_addr[BDBANKAWS +: BDBANKABS] == i);
+    wire                rdd_bankhit = rdd_grnt & (rdd_addr[BDBANKAWS +: BDBANKABS] == i);
+    wire                rdc_bankhit = rdc_grnt & (rdc_addr[BDBANKAWS +: BDBANKABS] == i);
     wire                rd_bankhit  = rdi_bankhit | rdd_bankhit | rdc_bankhit;
     wire                wr_bankhit  = wr_addr [BDBANKAWS +: BDBANKABS] == i;
     wire[BDBANKA-1 : 0] rd_addr     = (rdi_grnt & rdi_bankhit) ? rdi_addr :
