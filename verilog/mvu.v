@@ -366,6 +366,8 @@ end endgenerate
 
 
 /* Max poolers */
+wire relu_en;
+wire maxpool_load;
 assign relu_en       = max_en;
 assign maxpool_load = ~max_clr; // TODO remove this hack
 generate for(i=0;i<N;i=i+1) begin:poolarray
