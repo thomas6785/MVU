@@ -8,11 +8,13 @@
 `timescale 1ns/1ps
 
 /**** Module ****/
-module mvutop import mvu_pkg::*; ( 
-                                    MVU_EXT_INTERFACE mvu_ext,
-                                    input mvu_pkg::mvu_cfg_signals_t mvu_cfg[NMVU-1:0]
-                                 );
-
+module mvutop import mvu_pkg::*; (
+    input clk,
+    input rst_n,
+    output logic [NMVU-1:0] irq,
+    MVU_EXT_INTERFACE mvu_ext,
+    input mvu_pkg::mvu_cfg_signals_t mvu_cfg[NMVU-1:0]
+);
 
 genvar i;
 
@@ -116,7 +118,7 @@ interconn #(
     .W(BDBANKW),
     .BADDR(BDBANKA)
 ) ic (
-    .clk(mvu_ext.clk),
+    .clk(clk),
     .clr(ic_clr_int),
     .send_to(ic_send_to),
     .send_en(ic_send_en),
@@ -143,7 +145,7 @@ assign wri_addr     = ic_recv_addr;
 // TODO: FIGURE OUT WHERE TO WIRE OTHER INTERCONNECT DATA ACCESS SIGNAL
 assign rdi_en           = 0;
 //assign rdi_grnt         = 0;
-assign rdi_addr         = 0;
+assign rdi_addr         = 0; // TODO I think this should be '0 because we are getting "not driven" error. More importantly, I think this should be connected to something??? otherwise the interconnect won't work????
 //assign wri_grnt         = 0;
 
 assign rdd_en           = run;                              // MVU reads when running
@@ -163,17 +165,17 @@ assign run_acc          = run;                              // No stalls for now
 assign shacc_load       = shacc_done | shacc_load_start;    // Load accumulator with current output of MVP's
 
 // Clear signals (just connect to global reset for now)
-assign ic_clr_int       = !mvu_ext.rst_n;
-assign controller_clr   = {NMVU{!mvu_ext.rst_n}};
-assign outagu_clr       = {NMVU{!mvu_ext.rst_n}};
-assign shacc_clr_int    = {NMVU{!mvu_ext.rst_n}};       // Clear the accumulator
-assign scaleragu_clr    = {NMVU{!mvu_ext.rst_n}} | scaleragu_clr_dly;
-assign scaler_clr       = {NMVU{!mvu_ext.rst_n}};
+assign ic_clr_int       = !rst_n;
+assign controller_clr   = {NMVU{!rst_n}};
+assign outagu_clr       = {NMVU{!rst_n}};
+assign shacc_clr_int    = {NMVU{!rst_n}};       // Clear the accumulator
+assign scaleragu_clr    = {NMVU{!rst_n}} | scaleragu_clr_dly;
+assign scaler_clr       = {NMVU{!rst_n}};
 
 generate for(i = 0; i < NMVU; i = i + 1) begin: maxclrarry
-    assign inagu_clr[i]        = !mvu_ext.rst_n | mvu_cfg[i].start;
-    assign quant_clr_int[i]    = !mvu_ext.rst_n | mvu_cfg[i].quant_clr;
-    assign quant_ctrl_clr[i]   = !mvu_ext.rst_n | mvu_cfg[i].quant_clr;
+    assign inagu_clr[i]        = !rst_n | mvu_cfg[i].start;
+    assign quant_clr_int[i]    = !rst_n | mvu_cfg[i].quant_clr;
+    assign quant_ctrl_clr[i]   = !rst_n | mvu_cfg[i].quant_clr;
 end endgenerate
 
 // Quantizer and output control signals
@@ -190,14 +192,14 @@ generate for(i = 0; i < NMVU; i = i + 1) begin: controllerarray
     controller #(
         .BCNTDWN    (BCNTDWN)
     ) controller_unit (
-        .clk        (mvu_ext.clk),
+        .clk        (clk),
         .clr        (controller_clr[i]),
         .start      (mvu_cfg[i].start),
         .countdown  (mvu_cfg[i].countdown),
         .step       (step[i]),
         .run        (run[i]),
         .done       (mvu_ext.done[i]),
-        .irq        (mvu_ext.irq[i])
+        .irq        (irq[i])
     );
 end endgenerate
 
@@ -210,7 +212,7 @@ generate for(i = 0; i < NMVU; i = i + 1) begin: inaguarray
         .BWBANKA    (BWBANKA),
         .BWLENGTH   (BLENGTH)
     ) inagu_unit (
-        .clk        (mvu_ext.clk),
+        .clk        (clk),
         .clr        (inagu_clr[i]),
         .en         (run[i]),
         .iprecision (mvu_cfg[i].iprecision),
@@ -238,7 +240,7 @@ generate for(i = 0; i < NMVU; i = i+1) begin: scalerbiasaguarray
         .BWADDR     (BSBANKA),
         .BWLENGTH   (BLENGTH)
     ) scaleragu_unit (
-        .clk        (mvu_ext.clk),
+        .clk        (clk),
         .clr        (scaleragu_clr[i]),
         .step       (scaleragu_step[i]),
         .l          (mvu_cfg[i].slength),
@@ -252,7 +254,7 @@ generate for(i = 0; i < NMVU; i = i+1) begin: scalerbiasaguarray
         .BWADDR     (BBBANKA),
         .BWLENGTH   (BLENGTH)
     ) biasagu_unit (
-        .clk        (mvu_ext.clk),
+        .clk        (clk),
         .clr        (scaleragu_clr[i]),
         .step       (scaleragu_step[i]),
         .l          (mvu_cfg[i].blength),
@@ -273,7 +275,7 @@ generate for(i = 0; i < NMVU; i = i+1) begin:outaguarray
             .BDBANKA    (BDBANKA)
         ) outaguunit
         (
-            .clk        (mvu_ext.clk                            ),
+            .clk        (clk                            ),
             .clr        (outagu_clr[i]                      ),
             .step       (outstep[i]                         ),
             .load       (outagu_load[i]                     ),
@@ -288,7 +290,7 @@ generate for(i = 0; i < NMVU; i = i+1) begin: quantser_ctrlarray
     quantser_ctrl #(
         .BWOUT      (BSCALERP)
     ) quantser_ctrl_unit (
-        .clk        (mvu_ext.clk),
+        .clk        (clk),
         .clr        (quant_ctrl_clr[i]),
         .bwout      (quant_bwout[i*BPREC +: BQBOUT]),
         .start      (quant_start[i]),
@@ -316,8 +318,8 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
     shiftreg #(
         .N      (VVPSTAGES + MEMRDLATENCY + 1)
     ) shacc_load_delayarrayunit (
-        .clk    (mvu_ext.clk), 
-        .clr    (~mvu_ext.rst_n),
+        .clk    (clk), 
+        .clr    (~rst_n),
         .step   (1'b1),
         .in     (mvu_cfg[i].start),
         .out    (shacc_load_start[i])
@@ -326,8 +328,8 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
     shiftreg #(
         .N      (VVPSTAGES + MEMRDLATENCY + 0)
     ) neg_acc_delayarrayunit (
-        .clk    (mvu_ext.clk), 
-        .clr    (~mvu_ext.rst_n),
+        .clk    (clk), 
+        .clr    (~rst_n),
         .step   (1'b1),
         .in     (neg_acc[i]),
         .out    (neg_acc_dly[i])
@@ -336,8 +338,8 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
     shiftreg #(
         .N      (VVPSTAGES + MEMRDLATENCY + 0)
     ) shacc_sh_delayarrayunit (
-        .clk    (mvu_ext.clk), 
-        .clr    (~mvu_ext.rst_n),
+        .clk    (clk), 
+        .clr    (~rst_n),
         .step   (1'b1),
         .in     (agu_sh_out[i]),
         .out    (shacc_sh[i])
@@ -346,8 +348,8 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
     shiftreg #(
         .N      (VVPSTAGES + MEMRDLATENCY + 1)
     ) shacc_acc_delayarrayunit (
-        .clk    (mvu_ext.clk), 
-        .clr    (~mvu_ext.rst_n),
+        .clk    (clk), 
+        .clr    (~rst_n),
         .step   (1'b1),
         .in     (run_acc[i]),
         .out    (shacc_acc[i])
@@ -356,8 +358,8 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
     shiftreg #(
         .N      (VVPSTAGES + MEMRDLATENCY + 1)      // TODO: find a better way to re-time this
     ) acc_done_delayarrayunit (
-        .clk    (mvu_ext.clk), 
-        .clr    (~mvu_ext.rst_n),
+        .clk    (clk), 
+        .clr    (~rst_n),
         .step   (1'b1),
         .in     (agu_shacc_done[i]),
         .out    (shacc_done[i])
@@ -366,8 +368,8 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
     shiftreg #(
         .N      (VVPSTAGES + MEMRDLATENCY)      // TODO: find a better way to re-time this
     ) scaleragu_step_delayarrayunit (
-        .clk    (mvu_ext.clk), 
-        .clr    (~mvu_ext.rst_n),
+        .clk    (clk), 
+        .clr    (~rst_n),
         .step   (1'b1),
         .in     (agu_shacc_done[i]), // this took a minute to figure out TODO double-check then improve code clarity: the reason we get scaleragu_step BEFORE shacc_done (i.e. why does the scaler unit get its control signal before SHACC if it comes after?) it's because of the memory read delay (?) getting the bias and scaler ready before the shacc value arrives TODO probably best to clean up all this control and timing logic and have three source pulses generated by masks on wagu: shacc_sel, zigzag_sel, pool_load_sel, then have delayed versions of each signals available for controlling the various units
         .out    (scaleragu_step[i])
@@ -376,8 +378,8 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
     shiftreg #(
         .N      (VVPSTAGES + MEMRDLATENCY)      // TODO: find a better way to re-time this
     ) scaleragu_clr_delayarrayunit (
-        .clk    (mvu_ext.clk), 
-        .clr    (~mvu_ext.rst_n),
+        .clk    (clk), 
+        .clr    (~rst_n),
         .step   (1'b1),
         .in     (mvu_cfg[i].start),
         .out    (scaleragu_clr_dly[i])
@@ -386,8 +388,8 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
     shiftreg #(
         .N      (SCALERLATENCY+MAXPOOLSTAGES)
     ) maxpool_done_delayarrayunit (
-        .clk    (mvu_ext.clk),
-        .clr    (~mvu_ext.rst_n),
+        .clk    (clk),
+        .clr    (~rst_n),
         .step   (1'b1),
         .in     (shacc_done[i]),
         .out    (maxpool_done[i])
@@ -396,8 +398,8 @@ generate for(i=0; i < NMVU; i = i+1) begin: ctrl_delayarray
     shiftreg #(
         .N      (VVPSTAGES+MEMRDLATENCY+SCALERLATENCY+MAXPOOLSTAGES + 1)
     ) outagu_load_delayarrayunit (
-        .clk    (mvu_ext.clk),
-        .clr    (~mvu_ext.rst_n),
+        .clk    (clk),
+        .clr    (~rst_n),
         .step   (1'b1),
         .in     (mvu_cfg[i].start),
         .out    (outagu_load[i])
@@ -411,9 +413,9 @@ generate for(i=0;i<NMVU;i=i+1) begin:mvuarray
     mvu #(
             .N              (N),
             .NDBANK         (NDBANK)
-        ) mvuunit
+        ) mvuunit // TODO the MVU DEFINITELY should have a reset
         (
-            .clk            (mvu_ext.clk                            ),
+            .clk            (clk                            ),
             .run            (run[i]                                 ),
             .mul_mode       (mvu_cfg[i].mul_mode                    ),
             .neg_acc        (neg_acc_dly[i]                         ),

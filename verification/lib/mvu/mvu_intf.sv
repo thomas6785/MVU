@@ -1,6 +1,5 @@
-interface MVU_EXT_INTERFACE(input logic clk);
+interface MVU_EXT_INTERFACE();
     import mvu_pkg::*;
-    logic                       rst_n;                              // Global reset
     logic[          NMVU-1 : 0] done;                               // Indicates if a job is done
     logic[          NMVU-1 : 0] irq;                                // Interrupt request
     logic[  NMVU*BWBANKA-1 : 0] wrw_addr;                           // Weight memory: write address
@@ -22,8 +21,6 @@ interface MVU_EXT_INTERFACE(input logic clk);
     logic[       BBBANKW-1 : 0] wrb_word;                           // Bias memory: write word
 
 modport  mvu_ext (
-                           input  clk,
-                           input  rst_n,
                            output done,
                            output irq,
                            input  wrw_addr,

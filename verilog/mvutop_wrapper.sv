@@ -1,14 +1,20 @@
 module mvutop_wrapper import mvu_pkg::*;(
-        MVU_EXT_INTERFACE mvu_ext_if,
-        APB apb
+    input logic clk,
+    input logic rst_n,
+    output logic [NMVU-1:0] irq,
+    MVU_EXT_INTERFACE mvu_ext_if,
+    APB apb
 );
 
 mvu_pkg::mvu_cfg_signals_t mvu_cfg_shadow [NMVU-1:0];
 mvu_pkg::mvu_cfg_signals_t mvu_cfg_live [NMVU-1:0];
 
 mvutop mvu(
-    mvu_ext_if.mvu_ext,
-    mvu_cfg_live
+    .clk(clk),
+    .rst_n(rst_n),
+    .irq(irq),
+    .mvu_ext(mvu_ext_if.mvu_ext),
+    .mvu_cfg(mvu_cfg_live)
 );
 
 wire [mvu_pkg::APB_ADDR_WIDTH - 1:0] register_adr;
@@ -23,9 +29,9 @@ assign apb_write = apb.psel && apb.penable && apb.pwrite;
 genvar genvar_mvu_id;
 
 generate for (genvar_mvu_id = 0; genvar_mvu_id < NMVU; genvar_mvu_id = genvar_mvu_id+1) begin
-    always_ff @ (posedge mvu_ext_if.clk) begin : always_ff_block
+    always_ff @ (posedge clk) begin : always_ff_block
         // APB register write logic
-        if (~mvu_ext_if.rst_n) begin : reset // reset all registers to default values
+        if (~rst_n) begin : reset // reset all registers to default values
             mvu_cfg_shadow[genvar_mvu_id]                  <= '{default: '0}; // most registers are set to zero
 
             // Some default values, TODO remove these, they should really be set by the software
@@ -124,8 +130,8 @@ end endgenerate
 // Special handling for 'start' field: self-clearing
 genvar i;
 generate for(i=0; i < NMVU; i = i+1) begin
-    always @(posedge mvu_ext_if.clk) begin
-        if (~mvu_ext_if.rst_n) begin
+    always @(posedge clk) begin
+        if (~rst_n) begin
             mvu_cfg_live[i] <= '{default: '0}; // reset to all zeros
         end else begin
             // If a write to the MVUCOMMAND register occurs for this MVU, copy the shadow register to the live config signals and set the start bit
