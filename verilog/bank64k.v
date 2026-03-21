@@ -46,7 +46,7 @@ reg[w-1 : 0] wr_word;
 genvar i;
 
 
-
+// TODO move this MUX to the collision detection unit - why is it here?? The collision detection unit should be able to resolve collisions
 /* Wiring */
 always @(wri_word or wrd_word or wrc_word or wr_muxcode) begin
     case (wr_muxcode)
