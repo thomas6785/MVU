@@ -6,7 +6,7 @@ filesets:
     rtl:
         file_type: systemVerilogSource
         files:
-            - deps/common_cells/src/cf_math_pkg.sv
+            #- deps/common_cells/src/cf_math_pkg.sv
             - deps/apb/include/apb/assign.svh:
                 is_include_file: True
             - deps/apb/include/apb/typedef.svh:
@@ -58,6 +58,10 @@ filesets:
             - verilog/agu.sv
             - verilog/mvutop.sv
             - verilog/mvutop_wrapper.sv
+    do_not_pass_to_dependant:
+        file_type: systemVerilogSource
+        files:
+            - deps/common_cells/src/cf_math_pkg.sv
     synth_xilinx_bram_ip:
         file_type: xci
         files:
@@ -104,6 +108,7 @@ targets:
         default_tool: xsim 
         filesets_append:
             - tb
+            - do_not_pass_to_dependant
         description: Simulate the design
         tools: 
             xsim:
@@ -129,9 +134,9 @@ targets:
         <<: *sim
         parameters: [XILINX, TB_CDRUTEST]
     synth:
-        <<: *default
         description: Synthesize the design for an FPGA board
         filesets:
+            - do_not_pass_to_dependant
             - rtl
             - synth_xilinx
         default_tool: vivado
@@ -139,7 +144,7 @@ targets:
           vivado:
             part: xcvu9p-flgb2104-2-e
             pnr: none
-        toplevel: [mvutop]
+        toplevel: [mvutop_wrapper]
 parameters:
     XILINX:
         datatype  : int

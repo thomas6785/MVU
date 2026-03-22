@@ -155,10 +155,10 @@ typedef struct {
 	logic        [          1 : 0] mul_mode;            			   // Config: multiply mode
     logic                          d_signed;                           // Config: input data signed
     logic                          w_signed;                           // Config: weights signed
-    logic                          max_en;                             // Config: max pool enable
-    logic                          max_clr;                            // Config: max pool clear
-    logic                          quant_clr;                          // Quantizer: clear
-    logic                          max_pool;                           // Config: max pool mode
+    logic                          max_en;                             // Config: max pool enable // TODO review if these are actually used? I think they aren't
+    logic                          max_clr;                            // Config: max pool clear // TODO review if these are actually used? I think they aren't
+    logic                          quant_clr;                          // Quantizer: clear // TODO review if these are actually used? I think they aren't
+    logic                          max_pool;                           // Config: max pool mode // TODO review if these are actually used? I think they aren't
     logic        [ BQMSBIDX-1 : 0] quant_msbidx;                       // Quantizer: bit position index of the MSB
     logic        [  BCNTDWN-1 : 0] countdown;                          // Config: number of clocks to countdown for given task
     logic        [    BPREC-1 : 0] wprecision;                         // Config: weight precision
