@@ -6,7 +6,7 @@ filesets:
     rtl:
         file_type: systemVerilogSource
         files:
-            #- deps/common_cells/src/cf_math_pkg.sv
+            - deps/common_cells/src/cf_math_pkg.sv
             - deps/apb/include/apb/assign.svh:
                 is_include_file: True
             - deps/apb/include/apb/typedef.svh:
@@ -20,6 +20,7 @@ filesets:
                 file_type: verilogSource
             - verilog/bank64k.v:
                 file_type: verilogSource
+            - verilog/ram_2port.sv
             - verilog/bram2m.v:
                 file_type: verilogSource
             - verilog/cdru.v:
@@ -30,8 +31,7 @@ filesets:
                 file_type: verilogSource
             - verilog/mvp.v:
                 file_type: verilogSource
-            - verilog/mvu.v:
-                file_type: verilogSource
+            - verilog/mvu.sv
             - verilog/shacc.v:
                 file_type: verilogSource
             - verilog/vvp.v:
@@ -137,8 +137,8 @@ targets:
         description: Synthesize the design for an FPGA board
         filesets:
             - do_not_pass_to_dependant
-            - rtl
             - synth_xilinx
+            - rtl
         default_tool: vivado
         tools:
           vivado:

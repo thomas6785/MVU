@@ -4,21 +4,12 @@ package mvu_pkg;
 // Parameters 
 localparam NMVU    =  8;   // Number of MVUs. Ideally a Power-of-2. 
 localparam N       = 64;   // N x N matrix-vector product size. Power-of-2. 
-localparam NDBANK  = 32;   // Number of N-bit, 1024-element Data BANK.
 localparam BBIAS   = 32;   // Bitwidth of bias values 
 
 localparam BMVUA   = $clog2(NMVU);  // Bitwidth of MVU          Address 
-localparam BWBANKA = 9;             // Bitwidth of Weights BANK Address 
-localparam BWBANKW = 4096;          // Bitwidth of Weights BANK Word
-localparam BDBANKA = 15;            // Bitwidth of Data    BANK Address 
-localparam BDBANKW = N;             // Bitwidth of Data    BANK Word 
 
 localparam BACC     = 27;               // Bitwidth of Accumulators 
 localparam BSCALERP = 27;               // Bitwidth of the scaler output
-
-localparam BDHPBANKW    = 32;           // Bitwidth of high-precision data bank word
-localparam BDHPBUSW     = BDHPBANKW*N;  // Bitwidth of high-precision data word bus
-localparam BDHPBANKA    = 12;           // Bitwidth of high-precision data bank address
 
 // Quantizer parameters
 localparam BQMSBIDX     = $clog2(BSCALERP); // Bitwidth of the quantizer MSB location specifier
@@ -43,15 +34,29 @@ localparam MVU_INTERCONN_DLY = 1;
 
 localparam PIPELINE_DLY  = VVPSTAGES + SCALERLATENCY + HPADDERLATENCY + MAXPOOLSTAGES + MEMRDLATENCY;
 
+// Data bank parameters
+localparam NDBANK  = 32;   // Number of N-bit, 1024-element Data BANK.
+localparam BDBANKABS = $clog2(NDBANK);  // Bitwidth of Data    BANK Address Bank Select for internal reading
+localparam BDBANKAWS = 10;              // Bitwidth of Data    BANK Address Line Select for internal reading
 
-localparam BDBANKABS = $clog2(NDBANK);  // Bitwidth of Data    BANK Address Bank Select 
-localparam BDBANKAWS = 10;              // Bitwidth of Data    BANK Address Word Select
+localparam BDBANKA = BDBANKABS+BDBANKAWS;                // Bitwidth of Data    BANK Address for internal reading
+localparam BDBANKW = N;                 // Bitwidth of Data    BANK Word for internal reading
+localparam BDBANKA_EXT = BDBANKA + $clog2(BDBANKW/32); // Bitwidth of Data BANK Address for external interface (assuming 32bit word for external interface)
 
-// Scalar and Bias memory bank parameters
-localparam BSBANKA     = 6;             // Bitwidth of Scaler BANK address
+// Weight bank parameters
+localparam BWBANKA = 9;             	// Bitwidth of Weights BANK Address for internal reading 
+localparam BWBANKW = 4096;          	// Bitwidth of Weights BANK Word
+localparam BWBANKA_EXT = BWBANKA + $clog2(BWBANKW/32); // Bitwidth of Weights BANK Address for external interface (assuming 32bit word for external interface)
+
+// Scalar memory bank parameters
+localparam BSBANKA     = 6;             // Bitwidth of Scaler BANK address for internal reading
 localparam BSBANKW     = BSCALERB*N;    // Bitwidth of Scaler BANK word
+localparam BSBANKA_EXT = BSBANKA + $clog2(BSBANKW/32);             // Bitwidth of Scaler BANK address for external interface (assuming 32bit word for external interface)
+
+// Bias memory bank parameters
 localparam BBBANKA     = 6;             // Bitwidth of Bias BANK address
 localparam BBBANKW     = BBIAS*N;       // Bitwidth of Bias BANK word
+localparam BBBANKA_EXT = BBBANKA + $clog2(BBBANKW/32);             // Bitwidth of Bias BANK address for external interface (assuming 32bit word for external interface)
 
 // APB simulation and synthesis parameter
 localparam APB_ADDR_WIDTH = 15;  // $clog2(4KB CSR x 8 MVUs)
