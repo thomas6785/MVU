@@ -1,5 +1,3 @@
--sv
-
 $SOCROOT/rtl/ahb_infra/ahb_intf.sv
 # TODO diamond dependency could be cleaner
 
@@ -30,4 +28,3 @@ $SOCROOT/ip/MVU/verilog/vvp.v
 $SOCROOT/ip/MVU/verilog/zigzagu.v
 $SOCROOT/ip/MVU/verilog/mvu.sv
 $SOCROOT/ip/MVU/verilog/mvutop.sv
-$SOCROOT/ip/MVU/verilog/mvutop_wrapper.sv
