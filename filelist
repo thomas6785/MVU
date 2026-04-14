@@ -1,0 +1,33 @@
+-sv
+
+$SOCROOT/rtl/ahb_infra/ahb_intf.sv
+# TODO diamond dependency could be cleaner
+
+$SOCROOT/ip/MVU/verification/lib/mvu/mvu_pkg.sv
+$SOCROOT/ip/MVU/verification/lib/mvu/mvu_intf.sv
+# TODO move those two files to a better location
+
+$SOCROOT/ip/MVU/verilog/agu.sv
+$SOCROOT/ip/MVU/verilog/cdru.v
+$SOCROOT/ip/MVU/verilog/cdwu.v
+$SOCROOT/ip/MVU/verilog/controller.v
+$SOCROOT/ip/MVU/verilog/bank64k.v
+# $SOCROOT/ip/MVU/verilog/decoder.v
+$SOCROOT/ip/MVU/verilog/fixedpointscaler.v
+$SOCROOT/ip/MVU/verilog/inagu.sv
+$SOCROOT/ip/MVU/verilog/interconn.v
+$SOCROOT/ip/MVU/verilog/maxpool.v
+$SOCROOT/ip/MVU/verilog/mvp.v
+$SOCROOT/ip/MVU/verilog/outagu.v
+$SOCROOT/ip/MVU/verilog/portmux.v
+$SOCROOT/ip/MVU/verilog/quantser_ctrl.v
+$SOCROOT/ip/MVU/verilog/quantser.v
+$SOCROOT/ip/MVU/verilog/ram_2port.sv
+$SOCROOT/ip/MVU/verilog/ram_simple2port.v
+$SOCROOT/ip/MVU/verilog/shacc.v
+$SOCROOT/ip/MVU/verilog/shiftreg.v
+$SOCROOT/ip/MVU/verilog/vvp.v
+$SOCROOT/ip/MVU/verilog/zigzagu.v
+$SOCROOT/ip/MVU/verilog/mvu.sv
+$SOCROOT/ip/MVU/verilog/mvutop.sv
+$SOCROOT/ip/MVU/verilog/mvutop_wrapper.sv

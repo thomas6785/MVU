@@ -1,19 +1,19 @@
 package mvu_pkg;
 
 
-// Parameters 
-localparam NMVU    =  8;   // Number of MVUs. Ideally a Power-of-2. 
-localparam N       = 64;   // N x N matrix-vector product size. Power-of-2. 
-localparam BBIAS   = 32;   // Bitwidth of bias values 
+// Parameters
+localparam NMVU    =  8;   // Number of MVUs. Ideally a Power-of-2.
+localparam N       = 64;   // N x N matrix-vector product size. Power-of-2.
+localparam BBIAS   = 32;   // Bitwidth of bias values
 
-localparam BMVUA   = $clog2(NMVU);  // Bitwidth of MVU          Address 
+localparam BMVUA   = $clog2(NMVU);  // Bitwidth of MVU          Address
 
-localparam BACC     = 27;               // Bitwidth of Accumulators 
+localparam BACC     = 27;               // Bitwidth of Accumulators
 localparam BSCALERP = 27;               // Bitwidth of the scaler output
 
 // Quantizer parameters
 localparam BQMSBIDX     = $clog2(BSCALERP); // Bitwidth of the quantizer MSB location specifier
-localparam BQBOUT       = $clog2(BSCALERP); // Bitwidth of the quantizer 
+localparam BQBOUT       = $clog2(BSCALERP); // Bitwidth of the quantizer
 localparam QBWOUTBD     = $clog2(BSCALERP); // Bitwidth of the quantizer bit-depth out specifier
 
 // Other Parameters
@@ -44,7 +44,7 @@ localparam BDBANKW = N;                 // Bitwidth of Data    BANK Word for int
 localparam BDBANKA_EXT = BDBANKA + $clog2(BDBANKW/32); // Bitwidth of Data BANK Address for external interface (assuming 32bit word for external interface)
 
 // Weight bank parameters
-localparam BWBANKA = 9;             	// Bitwidth of Weights BANK Address for internal reading 
+localparam BWBANKA = 9;             	// Bitwidth of Weights BANK Address for internal reading
 localparam BWBANKW = 4096;          	// Bitwidth of Weights BANK Word
 localparam BWBANKA_EXT = BWBANKA + $clog2(BWBANKW/32); // Bitwidth of Weights BANK Address for external interface (assuming 32bit word for external interface)
 
@@ -57,15 +57,6 @@ localparam BSBANKA_EXT = BSBANKA + $clog2(BSBANKW/32);             // Bitwidth o
 localparam BBBANKA     = 6;             // Bitwidth of Bias BANK address
 localparam BBBANKW     = BBIAS*N;       // Bitwidth of Bias BANK word
 localparam BBBANKA_EXT = BBBANKA + $clog2(BBBANKW/32);             // Bitwidth of Bias BANK address for external interface (assuming 32bit word for external interface)
-
-// APB simulation and synthesis parameter
-localparam APB_ADDR_WIDTH = 15;  // $clog2(4KB CSR x 8 MVUs)
-localparam APB_DATA_WIDTH = 32;  // Working with 32bit registers
-localparam APB_STRB_WIDTH = cf_math_pkg::ceil_div(APB_DATA_WIDTH, 8);
-
-localparam time APB_ApplTime  = 2ns; // taken from https://github.com/pulp-platform/apb/blob/master/test/tb_apb_regs.sv#L31
-localparam time APB_TestTime  = 8ns; //
-
 
 typedef enum logic [11:0] {
 	CSR_MVUWBASEPTR         = 12'hf20,  //Base address for weight memory
@@ -144,10 +135,6 @@ typedef enum logic [11:0] {
 	CSR_MVUUSEHPADDER       = 12'hf69   //Use the hpadder if 1
 } mvu_csr_t;
 
-typedef logic [APB_ADDR_WIDTH-1:0] apb_addr_t;
-typedef logic [APB_DATA_WIDTH-1:0] apb_data_t;
-typedef logic [APB_STRB_WIDTH-1:0] apb_strb_t;
-
 typedef logic [BWBANKW-1 : 0 ] w_data_t;
 typedef w_data_t w_data_q_t[$];
 
@@ -189,7 +176,7 @@ typedef struct {
     logic                          usescaler_mem;                      // Config: use scalar mem if 1; otherwise use the scaler_b input for scaling
     logic                          usebias_mem;                        // Config: use the bias memory if 1; if not, not bias is added in the scaler
     logic        [   NJUMPS-1 : 0] shacc_load_sel;                     // Config: select jump trigger for shift/accumultor load
-    logic        [   NJUMPS-1 : 0] zigzag_step_sel;                    // Config: select jump trigger for stepping the zig-zag address generator  
+    logic        [   NJUMPS-1 : 0] zigzag_step_sel;                    // Config: select jump trigger for stepping the zig-zag address generator
 	logic        [   NJUMPS-1 : 0] pool_load_sel;                      // Config: select jump trigger for loading new value into the max pooler. For no pooling, set all 1's
 } mvu_cfg_signals_t;
 
