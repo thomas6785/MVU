@@ -166,7 +166,7 @@ mvp     #(N, 'b0010101) matrix_core  (clk, mul_mode, core_weights, core_data, co
 assign rdw_en = run; // always read a weight while we are running
 always @(posedge clk) core_weights <= rdw_word; // load the read weights into the matrix core
 
-ram_2port #(
+ram_2port_hetero #(
     .WR_WORD(32), // we write 32 bits at a time
     .RD_ADDR(BWBANKA),
     .RD_WORD(BWBANKW)
@@ -184,7 +184,7 @@ ram_2port #(
 
 // Scaler memory bank
 //      Used to store batch norm weights and/or quantization scalers
-ram_2port #(
+ram_2port_hetero #(
     .WR_WORD(32), // we write 32 bits at a time
     .RD_ADDR(BSBANKA),
     .RD_WORD(BSBANKW)
@@ -203,7 +203,7 @@ ram_2port #(
 
 // Bias memory bank
 //     Stores bias values from conv/fc/bn layers
-ram_2port #(
+ram_2port_hetero #(
     .WR_WORD(32), // we write 32 bits at a time
     .RD_ADDR(BBBANKA),
     .RD_WORD(BBBANKW)
@@ -235,7 +235,7 @@ end endgenerate
 
 /* Scalers */
 generate for (i=0; i < N; i=i+1) begin: scalerarray
-    
+
     assign scaler_mult_op[i] = usescaler_mem ? rds_word[i*BSCALERB +: BSCALERB] : scaler_b;
     assign scaler_post_op[i] = usebias_mem ? rdb_word[i*BBIAS +: BSCALERC] : 0;
 
