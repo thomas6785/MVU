@@ -6,22 +6,9 @@ filesets:
     rtl:
         file_type: systemVerilogSource
         files:
-            #- deps/common_cells/src/cf_math_pkg.sv
-            #- deps/apb/include/apb/assign.svh:
-            #    is_include_file: True
-            #- deps/apb/include/apb/typedef.svh:
-            #    is_include_file: True
-            #- deps/apb/src/apb_test.sv
-            #- deps/apb/src/apb_pkg.sv
-            #- deps/apb/src/apb_intf.sv
             - verification/lib/mvu/mvu_pkg.sv
             - verification/lib/mvu/mvu_intf.sv
-            - verilog/bram64k.v:
-                file_type: verilogSource
             - verilog/bank64k.v:
-                file_type: verilogSource
-            - verilog/ram_2port.sv
-            - verilog/bram2m.v:
                 file_type: verilogSource
             - verilog/cdru.v:
                 file_type: verilogSource
@@ -52,65 +39,42 @@ filesets:
                 file_type: verilogSource
             - verilog/fixedpointscaler.v:
                 file_type: verilogSource
-            - verilog/ram_simple2port.v:
-                file_type: verilogSource
             - verilog/inagu.sv
             - verilog/agu.sv
             - verilog/mvutop.sv
-            #- verilog/mvutop_wrapper.sv
-    #do_not_pass_to_dependant:
-        #file_type: systemVerilogSource
-        #files:
-            #- deps/common_cells/src/cf_math_pkg.sv
-    synth_xilinx_bram_ip:
+    synth:
         file_type: xci
         files:
-            - ip/build/xilinx/bram64k_64x1024_xilinx/bram2m_xilinx.xci
-            - ip/build/xilinx/bram64k_64x1024_xilinx/bram64k_64x1024_xilinx.xci
-    synth_xilinx:
-        files:
-            - mvu.xdc:
-                file_type: xdc
-    tb:
+            - ip/xilinx/xci/MVU_bias_memory/MVU_bias_memory.xci
+            - ip/xilinx/xci/MVU_data_memory/MVU_data_memory.xci
+            - ip/xilinx/xci/MVU_scaler_memory/MVU_scaler_memory.xci
+            - ip/xilinx/xci/MVU_weight_memory/MVU_weight_memory.xci
+            # Vivado will automatically generate IP from the .xci file - .xci is an IPAXCT-2009 file with enough info to rebuild the IP from scratch. Unfortunately xsim can't do this, so we need to include the simulation models maually in the sim filelist
+    sim:
         file_type: systemVerilogSource
         files:
-            - verification/lib/testbench/testbench_macros.svh:
-                is_include_file: true
-            - verification/lib/testbench/testbench_pkg.sv
-            - verification/lib/utils/utils.sv
-            - verification/lib/testbench/testbench_config.sv
-            - verification/lib/testbench/testbench_base.sv
-            - verification/tests/gemv/gemv_tester.sv:
-                is_include_file: true
-            - verification/tests/gemv/gemv_tester_w_relu.sv:
-                is_include_file: true
-            - verification/tests/scalar_bias/scalar_bias_tester.sv:
-                is_include_file: true
-            - verification/tests/CDRU/tb/cdru_tester.sv:
-                is_include_file: true
-            - verification/tests/tb_base/base_tester.sv: 
-                is_include_file: true
-            - verification/lib/testbench/testbench_top.sv
-            #- verilog/mvutop_wrapper.sv
-    tb_xilinx_bram_ip:
-        file_type: verilogSource
-        files:
-            - ip/build/xilinx/bram64k_64x1024_xilinx/simulation/blk_mem_gen_v8_4.v
-            - ip/build/xilinx/bram64k_64x1024_xilinx/sim/bram64k_64x1024_xilinx.v
-            - ip/build/xilinx/bram2m_xilinx/simulation/blk_mem_gen_v8_4.v
-            - ip/build/xilinx/bram2m_xilinx/sim/bram2m_xilinx.v
+            - ip/xilinx/sim_models/blk_mem_gen_v8_4.v
+            - ip/xilinx/sim_models/MVU_bias_memory.v
+            - ip/xilinx/sim_models/MVU_data_memory.v
+            - ip/xilinx/sim_models/MVU_scaler_memory.v
+            - ip/xilinx/sim_models/MVU_weight_memory.v
+            # See above - xsim cannot automatically generate simulation models from a .xci file, so I need to include them explicitly in the repo. Not ideal, worth trying to find a solution in future
+
 targets:
     default: &default
         filesets:
             - rtl
+            - synth
+            #- sim
+            # FuseSoC will use this target when including the MVU as a dependency. Make all three filelists available
     sim: &sim
         <<: *default
-        default_tool: xsim 
+        default_tool: xsim
         filesets_append:
             - tb
             #- do_not_pass_to_dependant
         description: Simulate the design
-        tools: 
+        tools:
             xsim:
                 xelab_options: [--debug, typical, -L, secureip, -L, unisims_ver, -L, unimacro_ver, -L, work.glbl, -L, blk_mem_gen_v8_4_3, --timescale, 1ns/1ps, --stat]
             modelsim:
