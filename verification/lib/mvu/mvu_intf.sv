@@ -1,7 +1,6 @@
 interface MVU_EXT_INTERFACE();
     import mvu_pkg::*;
     logic[          NMVU-1 : 0] done;                               // Indicates if a job is done
-    logic[          NMVU-1 : 0] irq;                                // Interrupt request
     logic[   BWBANKA_EXT-1 : 0] wrw_addr [NMVU-1:0];                // Weight memory: write address
     logic[            32-1 : 0] wrw_word [NMVU-1:0];                // Weight memory: write word
     logic[          NMVU-1 : 0] wrw_en;                             // Weight memory: write enable
@@ -22,7 +21,6 @@ interface MVU_EXT_INTERFACE();
 
 modport  mvu_ext (
                            output done,
-                           output irq,
                            input  wrw_addr,
                            input  wrw_word,
                            input  wrw_en,
