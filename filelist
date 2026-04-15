@@ -1,6 +1,3 @@
-$SOCROOT/rtl/ahb_infra/ahb_intf.sv
-# TODO diamond dependency could be cleaner
-
 $SOCROOT/ip/MVU/verification/lib/mvu/mvu_pkg.sv
 $SOCROOT/ip/MVU/verification/lib/mvu/mvu_intf.sv
 # TODO move those two files to a better location
@@ -20,7 +17,6 @@ $SOCROOT/ip/MVU/verilog/outagu.v
 $SOCROOT/ip/MVU/verilog/portmux.v
 $SOCROOT/ip/MVU/verilog/quantser_ctrl.v
 $SOCROOT/ip/MVU/verilog/quantser.v
-$SOCROOT/ip/MVU/verilog/ram_2port.sv
 $SOCROOT/ip/MVU/verilog/ram_simple2port.v
 $SOCROOT/ip/MVU/verilog/shacc.v
 $SOCROOT/ip/MVU/verilog/shiftreg.v
