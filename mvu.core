@@ -6,14 +6,14 @@ filesets:
     rtl:
         file_type: systemVerilogSource
         files:
-            - deps/common_cells/src/cf_math_pkg.sv
-            - deps/apb/include/apb/assign.svh:
-                is_include_file: True
-            - deps/apb/include/apb/typedef.svh:
-                is_include_file: True
-            - deps/apb/src/apb_test.sv
-            - deps/apb/src/apb_pkg.sv
-            - deps/apb/src/apb_intf.sv
+            #- deps/common_cells/src/cf_math_pkg.sv
+            #- deps/apb/include/apb/assign.svh:
+            #    is_include_file: True
+            #- deps/apb/include/apb/typedef.svh:
+            #    is_include_file: True
+            #- deps/apb/src/apb_test.sv
+            #- deps/apb/src/apb_pkg.sv
+            #- deps/apb/src/apb_intf.sv
             - verification/lib/mvu/mvu_pkg.sv
             - verification/lib/mvu/mvu_intf.sv
             - verilog/bram64k.v:
@@ -57,11 +57,11 @@ filesets:
             - verilog/inagu.sv
             - verilog/agu.sv
             - verilog/mvutop.sv
-            - verilog/mvutop_wrapper.sv
-    do_not_pass_to_dependant:
-        file_type: systemVerilogSource
-        files:
-            - deps/common_cells/src/cf_math_pkg.sv
+            #- verilog/mvutop_wrapper.sv
+    #do_not_pass_to_dependant:
+        #file_type: systemVerilogSource
+        #files:
+            #- deps/common_cells/src/cf_math_pkg.sv
     synth_xilinx_bram_ip:
         file_type: xci
         files:
@@ -91,7 +91,7 @@ filesets:
             - verification/tests/tb_base/base_tester.sv: 
                 is_include_file: true
             - verification/lib/testbench/testbench_top.sv
-            - verilog/mvutop_wrapper.sv
+            #- verilog/mvutop_wrapper.sv
     tb_xilinx_bram_ip:
         file_type: verilogSource
         files:
@@ -108,7 +108,7 @@ targets:
         default_tool: xsim 
         filesets_append:
             - tb
-            - do_not_pass_to_dependant
+            #- do_not_pass_to_dependant
         description: Simulate the design
         tools: 
             xsim:
@@ -136,7 +136,7 @@ targets:
     synth:
         description: Synthesize the design for an FPGA board
         filesets:
-            - do_not_pass_to_dependant
+            #- do_not_pass_to_dependant
             - synth_xilinx
             - rtl
         default_tool: vivado
@@ -144,7 +144,7 @@ targets:
           vivado:
             part: xcvu9p-flgb2104-2-e
             pnr: none
-        toplevel: [mvutop_wrapper]
+        toplevel: [mvutop]
 parameters:
     XILINX:
         datatype  : int
