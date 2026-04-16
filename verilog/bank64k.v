@@ -1,6 +1,6 @@
 /**
  * Data Bank
- * 
+ *
  * 128-bit-wide access, 64kbit (8KB) total.
  */
 
@@ -18,8 +18,6 @@ module bank64k(clk,
 /* Parameters */
 parameter  w = 64;
 parameter  a = 10;
-parameter C_DISABLE_WARN_BHV_COLL = 0;
-
 
 /* Interface */
 input  wire          clk;
@@ -43,8 +41,6 @@ input  wire[w-1 : 0] wrc_word;
 /* Local */
 wire[w-1 : 0] rd_word;
 reg[w-1 : 0] wr_word;
-genvar i;
-
 
 // TODO move this MUX to the collision detection unit - why is it here?? The collision detection unit should be able to resolve collisions
 /* Wiring */
@@ -56,52 +52,28 @@ always @(wri_word or wrd_word or wrc_word or wr_muxcode) begin
         default: wr_word = {w{1'b0}};
     endcase
 end
-    
-/*   Bcast Read */
+
+/* Bcast Read */
 assign rdi_word = rd_word;
 assign rdd_word = rd_word;
 assign rdc_word = rd_word;
 
-/* Temporary signals */
-wire[w-1 : 0] douta;
-wire[w-1 : 0] dinb;
+MVU_data_memory data_ram (
+  .clka ( clk       ),       // input wire clka
+  .clkb ( clk       ),       // input wire clkb
 
-// Temporary assignments
-assign dinb = 0;
+  .ena  ( wr_en     ),       // input wire ena
+  .wea  ( 8'hFF     ),       // input wire [7 : 0] wea // for now only allow writing full 64 bits at one time, but in future we might want to accommodate writing half-words, particularly for the external interface
+  .addra( wr_addr   ),       // input wire [9 : 0] addra
+  .dina ( wr_word   ),       // input wire [63 : 0] dina
+  .douta(           ),       // output wire [63 : 0] douta
 
-/* 64k internal BRAM */
-`ifdef INTEL
-    bram64k b (clk, wr_word, rd_addr, wr_addr, wr_en, rd_word);
-`elsif XILINX_BRAM_IP
-    bram64k_64x1024_xilinx b (
-        .clka(clk),    // input wire clka
-        .ena(1'b1),         // always enabled
-        .wea(wr_en),      // input wire [0 : 0] wea
-        .addra(wr_addr),  // input wire [9 : 0] addra
-        .dina(wr_word),    // input wire [63 : 0] dina
-        .douta(douta),      // output data (going nowhere, for now)
-        .clkb(clk),    // input wire clkb
-        .enb(rd_en),      // input wire enb
-        .web(1'b0),         // disable writes on second port (for now)
-        .addrb(rd_addr),  // input wire [9 : 0] addrb
-        .dinb(dinb),        // input data (going nowhere, for now)
-        .doutb(rd_word)  // output wire [64 : 0] doutb
-    );
-`else
-    ram_simple2port #(
-        .BDADDR (a),
-        .BDWORD (w)        
-    ) data_ram (
-        .clk(clk),
-        .rd_en(rd_en),
-        .rd_addr(rd_addr),
-        .rd_word(rd_word),
-        .wr_en(wr_en),
-        .wr_addr(wr_addr),
-        .wr_word(wr_word)
-    );
-`endif
-
+  .enb  ( rd_en     ),       // input wire enb
+  .web  ( 8'b0      ),       // input wire [7 : 0] web
+  .addrb( rd_addr   ),       // input wire [9 : 0] addrb
+  .dinb ( 64'b0     ),       // input wire [63 : 0] dinb
+  .doutb( rd_word   )        // output wire [63 : 0] doutb
+);
 
 /* Module end */
 endmodule

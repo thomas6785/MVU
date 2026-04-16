@@ -17,10 +17,16 @@ $SOCROOT/ip/MVU/verilog/outagu.v
 $SOCROOT/ip/MVU/verilog/portmux.v
 $SOCROOT/ip/MVU/verilog/quantser_ctrl.v
 $SOCROOT/ip/MVU/verilog/quantser.v
-$SOCROOT/ip/MVU/verilog/ram_simple2port.v
 $SOCROOT/ip/MVU/verilog/shacc.v
 $SOCROOT/ip/MVU/verilog/shiftreg.v
 $SOCROOT/ip/MVU/verilog/vvp.v
 $SOCROOT/ip/MVU/verilog/zigzagu.v
 $SOCROOT/ip/MVU/verilog/mvu.sv
 $SOCROOT/ip/MVU/verilog/mvutop.sv
+
+# Simulation models of the memory IP
+$SOCROOT/ip/MVU/ip/xilinx/sim_models/blk_mem_gen_v8_4.v
+$SOCROOT/ip/MVU/ip/xilinx/sim_models/MVU_bias_memory.v
+$SOCROOT/ip/MVU/ip/xilinx/sim_models/MVU_data_memory.v
+$SOCROOT/ip/MVU/ip/xilinx/sim_models/MVU_scaler_memory.v
+$SOCROOT/ip/MVU/ip/xilinx/sim_models/MVU_weight_memory.v

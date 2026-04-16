@@ -62,22 +62,25 @@ module mvu import mvu_pkg::*; #(
 
     // Weight memory signals
     input  wire[  BWBANKA-1 : 0]	rdw_addr,
-    input  wire[BWBANKA_EXT-1 : 0]	wrw_addr,			// Weight memory: write address
-    input  wire[         32-1: 0]	wrw_word,			// Weight memory: write word
+    input  wire[BWBANKA-1 : 0]	wrw_addr,			// Weight memory: write address
+    input  wire[BWBANKW-1: 0]	wrw_word,			// Weight memory: write word
     input  wire						wrw_en,				// Weight memory: write enable
+    input  wire[BWBANKW/8-1:0] wrw_be,
 
     // Scaler memory signals
     input   wire                rds_en,                 // Scaler memory: read enable
     input   wire[BSBANKA-1 : 0] rds_addr,               // Scaler memory: read address
-    input   wire[BSBANKA_EXT-1 : 0] wrs_addr,               // Scaler memory: write address
-    input   wire[32-1 : 0] wrs_word,               // Scaler memory: write word
+    input   wire[BSBANKA-1 : 0] wrs_addr,               // Scaler memory: write address
+    input   wire[BSBANKW-1 : 0] wrs_word,               // Scaler memory: write word
     input   wire                wrs_en,                 // Scaler memory: write enable
+    input   wire[BSBANKW/8-1:0] wrs_be,
 
     // Bias memory signals
     input   wire                rdb_en,                 // Bias memory: read enable
     input   wire[BBBANKA-1 : 0] rdb_addr,               // Bias memory: read address
-    input   wire[BBBANKA_EXT-1 : 0] wrb_addr,               // Bias memory: write address
-    input   wire[32-1 : 0] wrb_word,               // Bias memory: write word
+    input   wire[BBBANKA-1 : 0] wrb_addr,               // Bias memory: write address
+    input   wire[BBBANKW-1 : 0] wrb_word,               // Bias memory: write word
+    input   wire[BBBANKW/8-1:0] wrb_be,
     input   wire                wrb_en,                 // Bias memory: write enable
 
     input  wire                rdd_en,
@@ -132,12 +135,9 @@ wire[BDBANKW-1 : 0]     quant_out;
 reg [BDBANKW-1 : 0]     rdd_word;
 wire[BDBANKW-1 : 0]     wrd_word;
 
-wire[NDBANK*BDBANKW-1 : 0] rdd_words;
-wire[NDBANK*BDBANKW-1 : 0] rdi_words;
-wire[NDBANK*BDBANKW-1 : 0] rdc_words;
-wire[BDBANKW*NDBANK-1 : 0] rdd_words_t;
-wire[BDBANKW*NDBANK-1 : 0] rdi_words_t;
-wire[BDBANKW*NDBANK-1 : 0] rdc_words_t;
+wire[BDBANKW-1 : 0] rdd_words [NDBANK-1:0];
+wire[BDBANKW-1 : 0] rdi_words [NDBANK-1:0];
+wire[BDBANKW-1 : 0] rdc_words [NDBANK-1:0];
 
 wire[BSBANKW-1 : 0]        rds_word;                // Scaler memory: read word
 wire[BBBANKW-1 : 0]        rdb_word;                // Bias memory: read word
@@ -166,59 +166,50 @@ mvp     #(N, 'b0010101) matrix_core  (clk, mul_mode, core_weights, core_data, co
 assign rdw_en = run; // always read a weight while we are running
 always @(posedge clk) core_weights <= rdw_word; // load the read weights into the matrix core
 
-ram_2port_hetero #(
-    .WR_WORD(32), // we write 32 bits at a time
-    .RD_ADDR(BWBANKA),
-    .RD_WORD(BWBANKW)
-) weights_bank (
-    .clk        ( clk        ),
-    // Read port:
-    .rd_en      ( rdw_en     ),
-    .rd_addr    ( rdw_addr   ),
-    .rd_word    ( rdw_word   ),
-    // Write port:
-    .wr_en      ( wrw_en     ),
-    .wr_addr    ( wrw_addr   ),
-    .wr_word    ( wrw_word   )
+// Xilinx IP for BRAM
+MVU_weight_memory weights_bank (
+  .clka ( clk           ),   // input clka
+  .clkb ( clk           ),   // input clkb
+
+  .ena  ( wrw_en        ),   // input ena                   write enable
+  .wea  ( wrw_be        ),   // input [511 : 0] wea         byte-wise write enable
+  .addra( wrw_addr      ),   // input [8 : 0] addra         write address
+  .dina ( wrw_word      ),   // input [4095 : 0] dina       write data
+
+  .enb  ( rdw_en        ),   // input enb                   read enable
+  .addrb( rdw_addr      ),   // input [8 : 0] addrb         read address
+  .doutb( rdw_word      )    // output [4095 : 0] doutb     read data
 );
 
-// Scaler memory bank
-//      Used to store batch norm weights and/or quantization scalers
-ram_2port_hetero #(
-    .WR_WORD(32), // we write 32 bits at a time
-    .RD_ADDR(BSBANKA),
-    .RD_WORD(BSBANKW)
-) scaler_bank (
-    .clk(clk),
-    // Read port:
-    .rd_en      ( rds_en    ),
-    .rd_addr    ( rds_addr  ),
-    .rd_word    ( rds_word  ),
-    // Write port:
-    .wr_en      ( wrs_en    ),
-    .wr_addr    ( wrs_addr  ),
-    .wr_word    ( wrs_word  )
+// Xilinx IP for BRAM
+MVU_scaler_memory scalers_bank (
+  .clka ( clk           ),   // input clka
+  .clkb ( clk           ),   // input clkb
+
+  .ena  ( wrs_en        ),   // input ena                   write enable
+  .wea  ( wrs_be        ),   // input [127 : 0] wea         byte-wise write enable
+  .addra( wrs_addr      ),   // input [5 : 0] addra         write address
+  .dina ( wrs_word      ),   // input [1023 : 0] dina       write data
+
+  .enb  ( rds_en        ),   // input enb                   read enable
+  .addrb( rds_addr      ),   // input [5 : 0] addrb         read address
+  .doutb( rds_word      )    // output [1023 : 0] doutb     read data
 );
 
+// Xilinx IP for BRAM
+MVU_bias_memory bias_bank (
+  .clka ( clk           ),   // input clka
+  .clkb ( clk           ),   // input clkb
 
-// Bias memory bank
-//     Stores bias values from conv/fc/bn layers
-ram_2port_hetero #(
-    .WR_WORD(32), // we write 32 bits at a time
-    .RD_ADDR(BBBANKA),
-    .RD_WORD(BBBANKW)
-) bias_bank (
-    .clk(clk),
-    // Read port:
-    .rd_en      ( rdb_en    ),
-    .rd_addr    ( rdb_addr  ),
-    .rd_word    ( rdb_word  ),
-    // Write port:
-    .wr_en      ( wrb_en    ),
-    .wr_addr    ( wrb_addr  ),
-    .wr_word    ( wrb_word  )
+  .ena  ( wrb_en        ),   // input ena                   write enable
+  .wea  ( wrb_be        ),   // input [255 : 0] wea         byte-wise write enable
+  .addra( wrb_addr      ),   // input [5 : 0] addra         write address
+  .dina ( wrb_word      ),   // input [2047 : 0] dina       write data
+
+  .enb  ( rdb_en        ),   // input enb                   read enable
+  .addrb( rdb_addr      ),   // input [5 : 0] addrb         read address
+  .doutb( rdb_word      )    // output [2047 : 0] doutb     read data
 );
-
 
 // Negate the core output before accumulation, if the negation control is set to 1
 generate for (i=0; i < N; i=i+1) begin: acc_in_array
@@ -305,25 +296,15 @@ generate for(i=0;i<NDBANK;i=i+1) begin:bankarray
     bank64k #(BDBANKW, BDBANKAWS) db (clk, // TODO this is weirdly implemented? If collision handling is done in cdwu, why do we pass in all three ports into the bank?
         rd_en & rd_bankhit, rd_addr[0 +: BDBANKAWS], rd_muxcode,
         wr_en & wr_bankhit, wr_addr[0 +: BDBANKAWS], wr_muxcode,
-        rdi_words[i*BDBANKW +: BDBANKW], wri_word,
-        rdd_words[i*BDBANKW +: BDBANKW], wrd_word,
-        rdc_words[i*BDBANKW +: BDBANKW], wrc_word
+        rdi_words[i], wri_word,
+        rdd_words[i], wrd_word,
+        rdc_words[i], wrc_word
     );
-    for(j=0;j<BDBANKW;j=j+1) begin:transposej
-        assign rdd_words_t[j*NDBANK+i] = rdd_words[i*BDBANKW+j];
-        assign rdi_words_t[j*NDBANK+i] = rdi_words[i*BDBANKW+j];
-        assign rdc_words_t[j*NDBANK+i] = rdc_words[i*BDBANKW+j];
-    end
-end endgenerate
-generate for(i=0;i<BDBANKW;i=i+1) begin:reduxrdwords
-    always @(posedge clk) begin
-        rdd_word[i] <= |rdd_words_t[i*NDBANK +: NDBANK];
-        rdi_word[i] <= |rdi_words_t[i*NDBANK +: NDBANK];
-        rdc_word[i] <= |rdc_words_t[i*NDBANK +: NDBANK];
-         // TODO ORing data is problematic - what if the RAM doesn't give zero when not reading? Intel RAM model doesn't even have a read pin
-    end
 end endgenerate
 
+assign rdd_word = rdd_words[rdd_addr[BDBANKAWS +: BDBANKABS]];
+assign rdc_word = rdc_words[rdc_addr[BDBANKAWS +: BDBANKABS]];
+assign rdi_word = rdi_words[rdi_addr[BDBANKAWS +: BDBANKABS]];
 
 assign core_data = rdd_word;
 assign wrd_word  = quant_out;
