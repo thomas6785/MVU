@@ -2,7 +2,7 @@ package mvu_pkg;
 
 
 // Parameters
-localparam NMVU    =  8;   // Number of MVUs. Ideally a Power-of-2.
+localparam NMVU    =  4;   // Number of MVUs. Ideally a Power-of-2.
 localparam N       = 64;   // N x N matrix-vector product size. Power-of-2.
 localparam BBIAS   = 32;   // Bitwidth of bias values
 
