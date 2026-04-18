@@ -1,3 +1,5 @@
+`timescale 1ns / 1ns
+
 /**
  Address Generation Unit (AGU)
 
@@ -9,9 +11,9 @@
   which the loop counter is reset and passes to the next outer
   loop. In each iteration of each loop, the address offset
   jumps by jX, which is a signed integer.
- 
+
  Psuedocode:
- 
+
   while(1)
   {
       for (i1 = l1; i1 > 0; i1--)
@@ -56,9 +58,9 @@ input  logic                                clk;                // Clock
 input  logic                                clr;                // Clear
 input  logic                                step;               // Step
 input  logic signed [       BJUMP-1 : 0]    j[NJUMPS-1 : 0];    // Address jumps
-input  logic        [    BWLENGTH-1 : 0]    l[NJUMPS-1 : 1];    // Lengths 
+input  logic        [    BWLENGTH-1 : 0]    l[NJUMPS-1 : 1];    // Lengths
 output logic        [      BWADDR-1 : 0]    addr_out;           // Address generated
-output logic                                z_out[NJUMPS-1 : 1];// Signals when jump length X counter 
+output logic                                z_out[NJUMPS-1 : 1];// Signals when jump length X counter
 output logic        [      NJUMPS-1 : 0]    on_j;               // Signals when and which jump occurs
 
 /* Local logics */
@@ -179,9 +181,9 @@ initial begin
     end
     @(posedge clk)
     clr = 0;
-    
+
     repeat (1000) @(posedge clk);
-    
+
     $finish;
 end
 
